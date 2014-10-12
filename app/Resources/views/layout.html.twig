@@ -32,8 +32,8 @@
     </div>
     <div class="collapse navbar-collapse">
       <ul class="nav navbar-nav">
-        <li class="{% if app.request.attributes.get('_route') == '_index' %}active{% endif %}"><a href="{{ path('_index')}}">Accueil</a></li>
-        <li class="{% if app.request.attributes.get('_route') == '_partitioneur' %}active{% endif %}"><a href='{{ path('_partitioneur')}}'>Partitioneur</a></li>
+        <li {% if app.request.attributes.get('_route') == '_index' %}class="active"{% endif %}><a href="{{ path('_index')}}">Accueil</a></li>
+        <li {% if app.request.attributes.get('_route') == '_partitioneur' %}class="active"{% endif %}><a href='{{ path('_partitioneur')}}'>Partitioneur</a></li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li><a href="#about">Logout</a></li>
