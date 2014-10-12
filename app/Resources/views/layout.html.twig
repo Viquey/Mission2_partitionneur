@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="fr">
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+		<meta charset="utf-8">
+		<title>{% block title %}{% endblock %}</title>
+		<meta name="generator" content="Bootply" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+		<!--[if lt IE 9]>
+			<script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
+		<![endif]-->
+		<!--<link href="css/styles.css" rel="stylesheet">-->
+                {% block stylesheet %}
+                    <link rel="stylesheet" href="{{ asset('bundles/bootstrap/css/bootstrap.min.css') }}" />
+                    <link rel="stylesheet" href="{{ asset('bundles/bootstrap/css/styles.css') }}" />
+                    
+                {% endblock %}
+                {% block javascript %}
+                {% endblock %}
+                
+	</head>
+	<body>
+<div class="navbar navbar-default navbar-static-top">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="#">DaVyAn</a>
+    </div>
+    <div class="collapse navbar-collapse">
+      <ul class="nav navbar-nav">
+        <li class="{% if app.request.attributes.get('_route') == '_index' %}active{% endif %}"><a href="{{ path('_index')}}">Accueil</a></li>
+        <li class="{% if app.request.attributes.get('_route') == '_partitioneur' %}active{% endif %}"><a href='{{ path('_partitioneur')}}'>Partitioneur</a></li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li><a href="#about">Logout</a></li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div>
+</div>
+
+<div class="container">
+    
+    <div class="text-center">
+      {% block contentCenter %}
+      {% endblock %}
+    </div>
+    
+    {% block content %}
+    {% endblock %}
+  
+  
+  
+</div><!-- /.container -->
+	<!-- script references -->
+        
+                
+                {% block javascripts %}
+                    <script src="{{ asset('bundles/ajax/js/jquery-1.11.1.min.js') }}"></script>
+                    <!-- BOOTSTRAP SCRIPTS -->
+                    <script src="{{ asset('bundles/ajax/js/bootstrap.min.js') }}"></script>
+                    <!-- METISMENU SCRIPTS -->
+                    <script src="{{ asset('bundles/ajax/js/jquery.metisMenu.js') }}"></script>
+                    <!-- CUSTOM SCRIPTS -->
+                    <script src="{{ asset('bundles/ajax/js/custom.js') }}"></script>
+                    <script src="{{ asset('//ajax.googleapis.com/ajax/libs/jquery/2.0.2/jquery.min.js') }}"></script>
+                    {# pour des fonctionnalités du bootstrap Twitter #}
+                    <!--<script src="{{ asset('bundles/ajax/js/uploadForm.js') }}"></script>-->
+                    <script src="{{ asset('bundles/ajax/js/jsoncallback.js') }}"></script>
+                {% endblock %}
+                {% block ajout %}
+                {% endblock %}
+                
+                <script>
+                    function setClassActive(item) {
+                        
+                        var div = document.getElementsByTagName("li").item(item);
+                        div.setAttribute("class","active");
+                    }
+                    
+                </script>
+                
+	</body>
+</html>

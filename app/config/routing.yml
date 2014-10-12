@@ -1,0 +1,21 @@
+org_partitioneur:
+    resource: "@OrgPartitioneurBundle/Controller/"
+    type:     annotation
+    prefix:   /partitioneur
+
+org_user:
+    resource: "@OrgUserBundle/Controller/"
+    type:     annotation
+    prefix:   /
+
+org_forma:
+    resource: "@OrgFormaBundle/Controller/"
+    type:     annotation
+    prefix:   /
+
+login:
+    pattern:   /login
+    defaults:  { _controller: UserBundle:Security:login }
+    
+login_check:
+    pattern:   /login_check

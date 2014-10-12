@@ -1,0 +1,16 @@
+{% extends "::layout.html.twig" %}
+
+{% block title parent() ~ "Page de log" %}
+
+{% block contentCenter %}
+    
+    <form action="">
+        <h1>Connexion</h1>
+        Identifiant : <input type="text" id="inputLog"/>
+        </br>
+        Mot de Passe : <input type="password" id="password"/>
+        </br>
+        <input type="submit" value="Se connecter"/>
+    
+    </form>
+{% endblock %}
