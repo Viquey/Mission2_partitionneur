@@ -18,10 +18,7 @@ class DefaultController extends Controller
     public function partitionneurAction()
     {
         
-        
-        
         return array();
-        
         
     }
     
@@ -32,13 +29,6 @@ class DefaultController extends Controller
     public function indexAction()
     {
         
-        function active($url)
-        {
-            if ($_SERVER["PHP_SELF"] == $url)
-            {
-                echo ' class="active"';
-            }
-        }
         return array('message' => "it work !");
     }
     
