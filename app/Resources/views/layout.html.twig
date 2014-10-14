@@ -15,8 +15,6 @@
                     <link rel="stylesheet" href="{{ asset('bundles/bootstrap/css/styles.css') }}" />
                     
                 {% endblock %}
-                {% block javascript %}
-                {% endblock %}
                 
 	</head>
 	<body>
@@ -36,7 +34,7 @@
         <li {% if app.request.attributes.get('_route') == '_partitioneur' %}class="active"{% endif %}><a href='{{ path('_partitioneur')}}'>Partitioneur</a></li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
-        <li><a href="#about">Logout</a></li>
+        <li><a href="#about">LoXXXgout</a></li>
       </ul>
     </div><!--/.nav-collapse -->
   </div>
@@ -58,30 +56,21 @@
 	<!-- script references -->
         
                 
-                {% block javascripts %}
-                    <script src="{{ asset('bundles/ajax/js/jquery-1.11.1.min.js') }}"></script>
-                    <!-- BOOTSTRAP SCRIPTS -->
-                    <script src="{{ asset('bundles/ajax/js/bootstrap.min.js') }}"></script>
-                    <!-- METISMENU SCRIPTS -->
-                    <script src="{{ asset('bundles/ajax/js/jquery.metisMenu.js') }}"></script>
-                    <!-- CUSTOM SCRIPTS -->
-                    <script src="{{ asset('bundles/ajax/js/custom.js') }}"></script>
-                    <script src="{{ asset('//ajax.googleapis.com/ajax/libs/jquery/2.0.2/jquery.min.js') }}"></script>
-                    {# pour des fonctionnalités du bootstrap Twitter #}
-                    <!--<script src="{{ asset('bundles/ajax/js/uploadForm.js') }}"></script>-->
-                    <script src="{{ asset('bundles/ajax/js/jsoncallback.js') }}"></script>
-                {% endblock %}
-                {% block ajout %}
-                {% endblock %}
                 
-                <script>
-                    function setClassActive(item) {
-                        
-                        var div = document.getElementsByTagName("li").item(item);
-                        div.setAttribute("class","active");
-                    }
-                    
-                </script>
+            <script src="{{ asset('bundles/ajax/js/jquery-1.11.1.min.js') }}"></script>
+            <!-- BOOTSTRAP SCRIPTS -->
+            <script src="{{ asset('bundles/ajax/js/bootstrap.min.js') }}"></script>
+            <!-- METISMENU SCRIPTS -->
+            <script src="{{ asset('bundles/ajax/js/jquery.metisMenu.js') }}"></script>
+            <!-- CUSTOM SCRIPTS -->
+            <script src="{{ asset('bundles/ajax/js/custom.js') }}"></script>
+            <script src="{{ asset('//ajax.googleapis.com/ajax/libs/jquery/2.0.2/jquery.min.js') }}"></script>
+            {# pour des fonctionnalités du bootstrap Twitter #}
+            <script src="{{ asset('bundles/ajax/js/jsoncallback.js') }}"></script>
+            
+                
+            {% block scripts %}
+            {% endblock %}
                 
 	</body>
 </html>

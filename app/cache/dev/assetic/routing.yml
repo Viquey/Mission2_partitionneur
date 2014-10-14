@@ -2,4 +2,4 @@ _assetic:
     resource: .
     type: assetic
 _app:
-    resource: 'C:/www/viquey/Mission2/Mission2/app/config/routing_dev.yml'
+    resource: 'C:/www/viquey/Mission2_partitionneur/Mission2_partitionneur/app/config/routing_dev.yml'
