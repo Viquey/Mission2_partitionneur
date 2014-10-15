@@ -19,6 +19,7 @@ class AppKernel extends Kernel
             new Org\FormaBundle\OrgFormaBundle(),
             new Org\UserBundle\OrgUserBundle(),
             new Org\PartitioneurBundle\OrgPartitioneurBundle(),
+            new FOS\UserBundle\FOSUserBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {
