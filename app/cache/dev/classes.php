@@ -1001,11 +1001,19 @@ $response = $event->getResponse();
 if (!in_array($response->getStatusCode(), array(200, 203, 300, 301, 302, 404, 410))) {
 return;
 }
-if (null !== $configuration->getSMaxAge()) {
-$response->setSharedMaxAge($configuration->getSMaxAge());
+if (null !== $age = $configuration->getSMaxAge()) {
+if (!is_numeric($age)) {
+$now = microtime(true);
+$age = ceil(strtotime($configuration->getSMaxAge(), $now) - $now);
 }
-if (null !== $configuration->getMaxAge()) {
-$response->setMaxAge($configuration->getMaxAge());
+$response->setSharedMaxAge($age);
+}
+if (null !== $age = $configuration->getMaxAge()) {
+if (!is_numeric($age)) {
+$now = microtime(true);
+$age = ceil(strtotime($configuration->getMaxAge(), $now) - $now);
+}
+$response->setMaxAge($age);
 }
 if (null !== $configuration->getExpires()) {
 $date = \DateTime::createFromFormat('U', strtotime($configuration->getExpires()), new \DateTimeZone('UTC'));
@@ -1117,7 +1125,6 @@ use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\Security\Core\Authentication\AuthenticationTrustResolverInterface;
 use Symfony\Component\Security\Core\SecurityContextInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
@@ -1143,6 +1150,9 @@ return;
 }
 if (null === $this->securityContext || null === $this->trustResolver) {
 throw new \LogicException('To use the @Security tag, you need to install the Symfony Security bundle.');
+}
+if (null === $this->language) {
+throw new \LogicException('To use the @Security tag, you need to use the Security component 2.4 or newer and to install the ExpressionLanguage component.');
 }
 if (!$this->language->evaluate($configuration->getExpression(), $this->getVariables($request))) {
 throw new AccessDeniedException(sprintf('Expression "%s" denied access.', $configuration->getExpression()));
@@ -1367,7 +1377,7 @@ return $id;
 if ($request->attributes->has($name)) {
 return $request->attributes->get($name);
 }
-if ($request->attributes->has('id')) {
+if ($request->attributes->has('id') && !isset($options['id'])) {
 return $request->attributes->get('id');
 }
 return false;
@@ -1382,6 +1392,9 @@ foreach ($options['exclude'] as $exclude) {
 unset($options['mapping'][$exclude]);
 }
 if (!$options['mapping']) {
+return false;
+}
+if (isset($options['id']) && null === $request->attributes->get($options['id'])) {
 return false;
 }
 $criteria = array();
@@ -1603,303 +1616,6 @@ return $handler;
 }
 }
 }
-namespace Assetic
-{
-interface ValueSupplierInterface
-{
-public function getValues();
-}
-}
-namespace Symfony\Bundle\AsseticBundle
-{
-use Assetic\ValueSupplierInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-class DefaultValueSupplier implements ValueSupplierInterface
-{
-protected $container;
-public function __construct(ContainerInterface $container)
-{
-$this->container = $container;
-}
-public function getValues()
-{
-if (!$this->container->isScopeActive('request')) {
-return array();
-}
-$request = $this->container->get('request');
-return array('locale'=> $request->getLocale(),'env'=> $this->container->getParameter('kernel.environment'),
-);
-}
-}
-}
-namespace Assetic\Factory
-{
-use Assetic\Asset\AssetCollection;
-use Assetic\Asset\AssetCollectionInterface;
-use Assetic\Asset\AssetInterface;
-use Assetic\Asset\AssetReference;
-use Assetic\Asset\FileAsset;
-use Assetic\Asset\GlobAsset;
-use Assetic\Asset\HttpAsset;
-use Assetic\AssetManager;
-use Assetic\Factory\Worker\WorkerInterface;
-use Assetic\FilterManager;
-class AssetFactory
-{
-private $root;
-private $debug;
-private $output;
-private $workers;
-private $am;
-private $fm;
-public function __construct($root, $debug = false)
-{
-$this->root = rtrim($root,'/');
-$this->debug = $debug;
-$this->output ='assetic/*';
-$this->workers = array();
-}
-public function setDebug($debug)
-{
-$this->debug = $debug;
-}
-public function isDebug()
-{
-return $this->debug;
-}
-public function setDefaultOutput($output)
-{
-$this->output = $output;
-}
-public function addWorker(WorkerInterface $worker)
-{
-$this->workers[] = $worker;
-}
-public function getAssetManager()
-{
-return $this->am;
-}
-public function setAssetManager(AssetManager $am)
-{
-$this->am = $am;
-}
-public function getFilterManager()
-{
-return $this->fm;
-}
-public function setFilterManager(FilterManager $fm)
-{
-$this->fm = $fm;
-}
-public function createAsset($inputs = array(), $filters = array(), array $options = array())
-{
-if (!is_array($inputs)) {
-$inputs = array($inputs);
-}
-if (!is_array($filters)) {
-$filters = array($filters);
-}
-if (!isset($options['output'])) {
-$options['output'] = $this->output;
-}
-if (!isset($options['vars'])) {
-$options['vars'] = array();
-}
-if (!isset($options['debug'])) {
-$options['debug'] = $this->debug;
-}
-if (!isset($options['root'])) {
-$options['root'] = array($this->root);
-} else {
-if (!is_array($options['root'])) {
-$options['root'] = array($options['root']);
-}
-$options['root'][] = $this->root;
-}
-if (!isset($options['name'])) {
-$options['name'] = $this->generateAssetName($inputs, $filters, $options);
-}
-$asset = $this->createAssetCollection(array(), $options);
-$extensions = array();
-foreach ($inputs as $input) {
-if (is_array($input)) {
-$asset->add(call_user_func_array(array($this,'createAsset'), $input));
-} else {
-$asset->add($this->parseInput($input, $options));
-$extensions[pathinfo($input, PATHINFO_EXTENSION)] = true;
-}
-}
-foreach ($filters as $filter) {
-if ('?'!= $filter[0]) {
-$asset->ensureFilter($this->getFilter($filter));
-} elseif (!$options['debug']) {
-$asset->ensureFilter($this->getFilter(substr($filter, 1)));
-}
-}
-if (!empty($options['vars'])) {
-$toAdd = array();
-foreach ($options['vars'] as $var) {
-if (false !== strpos($options['output'],'{'.$var.'}')) {
-continue;
-}
-$toAdd[] ='{'.$var.'}';
-}
-if ($toAdd) {
-$options['output'] = str_replace('*','*.'.implode('.', $toAdd), $options['output']);
-}
-}
-if (1 == count($extensions) && !pathinfo($options['output'], PATHINFO_EXTENSION) && $extension = key($extensions)) {
-$options['output'] .='.'.$extension;
-}
-$asset->setTargetPath(str_replace('*', $options['name'], $options['output']));
-return $this->applyWorkers($asset);
-}
-public function generateAssetName($inputs, $filters, $options = array())
-{
-foreach (array_diff(array_keys($options), array('output','debug','root')) as $key) {
-unset($options[$key]);
-}
-ksort($options);
-return substr(sha1(serialize($inputs).serialize($filters).serialize($options)), 0, 7);
-}
-protected function parseInput($input, array $options = array())
-{
-if ('@'== $input[0]) {
-return $this->createAssetReference(substr($input, 1));
-}
-if (false !== strpos($input,'://') || 0 === strpos($input,'//')) {
-return $this->createHttpAsset($input, $options['vars']);
-}
-if (self::isAbsolutePath($input)) {
-if ($root = self::findRootDir($input, $options['root'])) {
-$path = ltrim(substr($input, strlen($root)),'/');
-} else {
-$path = null;
-}
-} else {
-$root = $this->root;
-$path = $input;
-$input = $this->root.'/'.$path;
-}
-if (false !== strpos($input,'*')) {
-return $this->createGlobAsset($input, $root, $options['vars']);
-}
-return $this->createFileAsset($input, $root, $path, $options['vars']);
-}
-protected function createAssetCollection(array $assets = array(), array $options = array())
-{
-return new AssetCollection($assets, array(), null, isset($options['vars']) ? $options['vars'] : array());
-}
-protected function createAssetReference($name)
-{
-if (!$this->am) {
-throw new \LogicException('There is no asset manager.');
-}
-return new AssetReference($this->am, $name);
-}
-protected function createHttpAsset($sourceUrl, $vars)
-{
-return new HttpAsset($sourceUrl, array(), false, $vars);
-}
-protected function createGlobAsset($glob, $root = null, $vars)
-{
-return new GlobAsset($glob, array(), $root, $vars);
-}
-protected function createFileAsset($source, $root = null, $path = null, $vars)
-{
-return new FileAsset($source, array(), $root, $path, $vars);
-}
-protected function getFilter($name)
-{
-if (!$this->fm) {
-throw new \LogicException('There is no filter manager.');
-}
-return $this->fm->get($name);
-}
-private function applyWorkers(AssetCollectionInterface $asset)
-{
-foreach ($asset as $leaf) {
-foreach ($this->workers as $worker) {
-$retval = $worker->process($leaf);
-if ($retval instanceof AssetInterface && $leaf !== $retval) {
-$asset->replaceLeaf($leaf, $retval);
-}
-}
-}
-foreach ($this->workers as $worker) {
-$retval = $worker->process($asset);
-if ($retval instanceof AssetInterface) {
-$asset = $retval;
-}
-}
-return $asset instanceof AssetCollectionInterface ? $asset : $this->createAssetCollection(array($asset));
-}
-private static function isAbsolutePath($path)
-{
-return'/'== $path[0] ||'\\'== $path[0] || (3 < strlen($path) && ctype_alpha($path[0]) && $path[1] ==':'&& ('\\'== $path[2] ||'/'== $path[2]));
-}
-private static function findRootDir($path, array $roots)
-{
-foreach ($roots as $root) {
-if (0 === strpos($path, $root)) {
-return $root;
-}
-}
-}
-}
-}
-namespace Symfony\Bundle\AsseticBundle\Factory
-{
-use Assetic\Factory\AssetFactory as BaseAssetFactory;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
-use Symfony\Component\HttpKernel\KernelInterface;
-class AssetFactory extends BaseAssetFactory
-{
-private $kernel;
-private $container;
-private $parameterBag;
-public function __construct(KernelInterface $kernel, ContainerInterface $container, ParameterBagInterface $parameterBag, $baseDir, $debug = false)
-{
-$this->kernel = $kernel;
-$this->container = $container;
-$this->parameterBag = $parameterBag;
-parent::__construct($baseDir, $debug);
-}
-protected function parseInput($input, array $options = array())
-{
-$input = $this->parameterBag->resolveValue($input);
-if ('@'== $input[0] && false !== strpos($input,'/')) {
-$bundle = substr($input, 1);
-if (false !== $pos = strpos($bundle,'/')) {
-$bundle = substr($bundle, 0, $pos);
-}
-$options['root'] = array($this->kernel->getBundle($bundle)->getPath());
-if (false !== $pos = strpos($input,'*')) {
-list($before, $after) = explode('*', $input, 2);
-$input = $this->kernel->locateResource($before).'*'.$after;
-} else {
-$input = $this->kernel->locateResource($input);
-}
-}
-return parent::parseInput($input, $options);
-}
-protected function createAssetReference($name)
-{
-if (!$this->getAssetManager()) {
-$this->setAssetManager($this->container->get('assetic.asset_manager'));
-}
-return parent::createAssetReference($name);
-}
-protected function getFilter($name)
-{
-if (!$this->getFilterManager()) {
-$this->setFilterManager($this->container->get('assetic.filter_manager'));
-}
-return parent::getFilter($name);
-}
-}
-}
 namespace Symfony\Bundle\FrameworkBundle\Controller
 {
 use Symfony\Component\HttpKernel\KernelInterface;
@@ -2091,7 +1807,6 @@ return array($controller, $method);
 }
 namespace Symfony\Component\HttpKernel\EventListener
 {
-use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -2099,7 +1814,7 @@ abstract class SessionListener implements EventSubscriberInterface
 {
 public function onKernelRequest(GetResponseEvent $event)
 {
-if (HttpKernelInterface::MASTER_REQUEST !== $event->getRequestType()) {
+if (!$event->isMasterRequest()) {
 return;
 }
 $request = $event->getRequest();
@@ -3390,9 +3105,13 @@ return $this->getBag($this->flashName);
 namespace Symfony\Component\HttpFoundation\Session\Storage\Handler
 {
 if (version_compare(phpversion(),'5.4.0','>=')) {
-class NativeSessionHandler extends \SessionHandler {}
+class NativeSessionHandler extends \SessionHandler
+{
+}
 } else {
-class NativeSessionHandler {}
+class NativeSessionHandler
+{
+}
 }
 }
 namespace Symfony\Component\HttpFoundation\Session\Storage\Handler
@@ -4706,6 +4425,36 @@ public function supportsClass($class);
 }
 namespace Symfony\Component\Security\Http
 {
+use Symfony\Component\HttpFoundation\Request;
+interface AccessMapInterface
+{
+public function getPatterns(Request $request);
+}
+}
+namespace Symfony\Component\Security\Http
+{
+use Symfony\Component\HttpFoundation\RequestMatcherInterface;
+use Symfony\Component\HttpFoundation\Request;
+class AccessMap implements AccessMapInterface
+{
+private $map = array();
+public function add(RequestMatcherInterface $requestMatcher, array $attributes = array(), $channel = null)
+{
+$this->map[] = array($requestMatcher, $attributes, $channel);
+}
+public function getPatterns(Request $request)
+{
+foreach ($this->map as $elements) {
+if (null === $elements[0] || $elements[0]->matches($request)) {
+return array($elements[1], $elements[2]);
+}
+}
+return array(null, null);
+}
+}
+}
+namespace Symfony\Component\Security\Http
+{
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\Event\FinishRequestEvent;
@@ -4760,7 +4509,7 @@ namespace
 {
 class Twig_Environment
 {
-const VERSION ='1.16.0';
+const VERSION ='1.16.1';
 protected $charset;
 protected $loader;
 protected $debug;
@@ -5798,23 +5547,29 @@ $value = (string) $value;
 function twig_array_merge($arr1, $arr2)
 {
 if (!is_array($arr1) || !is_array($arr2)) {
-throw new Twig_Error_Runtime('The merge filter only works with arrays or hashes.');
+throw new Twig_Error_Runtime(sprintf('The merge filter only works with arrays or hashes; %s and %s given.', gettype($arr1), gettype($arr2)));
 }
 return array_merge($arr1, $arr2);
 }
 function twig_slice(Twig_Environment $env, $item, $start, $length = null, $preserveKeys = false)
 {
 if ($item instanceof Traversable) {
-$item = iterator_to_array($item, false);
+if ($item instanceof IteratorAggregate) {
+$item = $item->getIterator();
+}
+if ($start >= 0 && $length >= 0) {
+return iterator_to_array(new LimitIterator($item, $start, $length), $preserveKeys);
+}
+$item = iterator_to_array($item, $preserveKeys);
 }
 if (is_array($item)) {
 return array_slice($item, $start, $length, $preserveKeys);
 }
 $item = (string) $item;
 if (function_exists('mb_get_info') && null !== $charset = $env->getCharset()) {
-return mb_substr($item, $start, null === $length ? mb_strlen($item, $charset) - $start : $length, $charset);
+return (string) mb_substr($item, $start, null === $length ? mb_strlen($item, $charset) - $start : $length, $charset);
 }
-return null === $length ? substr($item, $start) : substr($item, $start, $length);
+return (string) (null === $length ? substr($item, $start) : substr($item, $start, $length));
 }
 function twig_first(Twig_Environment $env, $item)
 {
@@ -5887,14 +5642,14 @@ return $array;
 function twig_in_filter($value, $compare)
 {
 if (is_array($compare)) {
-return in_array($value, $compare, is_object($value));
+return in_array($value, $compare, true);
 } elseif (is_string($compare)) {
-if (!strlen($value)) {
-return empty($compare);
+if (!is_string($value)) {
+return false;
 }
-return false !== strpos($compare, (string) $value);
+return''=== $value || false !== strpos($compare, $value);
 } elseif ($compare instanceof Traversable) {
-return in_array($value, iterator_to_array($compare, false), is_object($value));
+return in_array($value, iterator_to_array($compare, false), true);
 }
 return false;
 }
@@ -5917,7 +5672,7 @@ switch ($strategy) {
 case'html':
 static $htmlspecialcharsCharsets;
 if (null === $htmlspecialcharsCharsets) {
-if ('hiphop'=== substr(PHP_VERSION, -6)) {
+if (defined('HHVM_VERSION')) {
 $htmlspecialcharsCharsets = array('utf-8'=> true,'UTF-8'=> true);
 } else {
 $htmlspecialcharsCharsets = array('ISO-8859-1'=> true,'ISO8859-1'=> true,'ISO-8859-15'=> true,'ISO8859-15'=> true,'utf-8'=> true,'UTF-8'=> true,'CP866'=> true,'IBM866'=> true,'866'=> true,'CP1251'=> true,'WINDOWS-1251'=> true,'WIN-1251'=> true,'1251'=> true,'CP1252'=> true,'WINDOWS-1252'=> true,'1252'=> true,'KOI8-R'=> true,'KOI8-RU'=> true,'KOI8R'=> true,'BIG5'=> true,'950'=> true,'GB2312'=> true,'936'=> true,'BIG5-HKSCS'=> true,'SHIFT_JIS'=> true,'SJIS'=> true,'932'=> true,'EUC-JP'=> true,'EUCJP'=> true,'ISO8859-5'=> true,'ISO-8859-5'=> true,'MACROMAN'=> true,
@@ -6465,7 +6220,11 @@ $message = sprintf('Key "%s" in object with ArrayAccess of class "%s" does not e
 } elseif (is_object($object)) {
 $message = sprintf('Impossible to access a key "%s" on an object of class "%s" that does not implement ArrayAccess interface', $item, get_class($object));
 } elseif (is_array($object)) {
+if (empty($object)) {
+$message = sprintf('Key "%s" does not exist as the array is empty', $arrayItem);
+} else {
 $message = sprintf('Key "%s" for array with keys "%s" does not exist', $arrayItem, implode(', ', array_keys($object)));
+}
 } elseif (Twig_Template::ARRAY_CALL === $type) {
 $message = sprintf('Impossible to access a key ("%s") on a %s variable ("%s")', $item, gettype($object), $object);
 } else {
