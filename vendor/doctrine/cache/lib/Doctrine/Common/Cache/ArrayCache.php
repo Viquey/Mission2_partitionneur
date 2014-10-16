@@ -42,7 +42,7 @@ class ArrayCache extends CacheProvider
      */
     protected function doFetch($id)
     {
-        return $this->doContains($id) ? $this->data[$id] : false;
+        return (isset($this->data[$id])) ? $this->data[$id] : false;
     }
 
     /**
@@ -50,7 +50,7 @@ class ArrayCache extends CacheProvider
      */
     protected function doContains($id)
     {
-        return isset($this->data[$id]) || array_key_exists($id, $this->data);
+        return isset($this->data[$id]);
     }
 
     /**

@@ -37,7 +37,6 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
             'integer' => array(1),
             'float' => array(1.5),
             'object' => array(new ArrayObject()),
-            'null' => array(null),
         );
     }
 

@@ -9,13 +9,12 @@
  * file that was distributed with this source code.
  */
 
-namespace Assetic\Factory\Resource;
+namespace Assetic\Util;
 
-/**
- * A resource is something formulae can be loaded from.
- *
- * @author Kris Wallsmith <kris.wallsmith@gmail.com>
- */
-interface IteratorResourceInterface extends ResourceInterface, \IteratorAggregate
+abstract class PathUtils extends VarUtils
 {
+    public static function resolvePath($path, array $vars, array $values)
+    {
+        return static::resolve($path, $vars, $values);
+    }
 }
