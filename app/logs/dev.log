@@ -20572,6 +20572,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> parent of 02f49f8... Revert "Ajout de FosUserBundle au projet"
 [2014-10-14 10:23:13] event.DEBUG: Notified event "console.command" to listener "Symfony\Bridge\Monolog\Handler\ConsoleHandler::onCommand". [] []
@@ -22989,3 +22990,5 @@
 >>>>>>> parent of 9727fa4... Ajout de FosUserBundle au projet
 =======
 >>>>>>> parent of 02f49f8... Revert "Ajout de FosUserBundle au projet"
+=======
+>>>>>>> parent of 9727fa4... Ajout de FosUserBundle au projet

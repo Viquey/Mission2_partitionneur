@@ -6,8 +6,11 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
             <file>file:/C:/www/viquey/Mission2_partitionneur/Mission2_partitionneur/app/AppKernel.php</file>
 =======
+=======
+>>>>>>> parent of 9727fa4... Ajout de FosUserBundle au projet
 =======
 >>>>>>> parent of 9727fa4... Ajout de FosUserBundle au projet
             <file>file:/C:/www/viquey/Mission2_partitionneur/Mission2_partitionneur/app/Resources/views/layocut.html.twig</file>
@@ -15,12 +18,15 @@
             <file>file:/C:/www/viquey/Mission2_partitionneur/Mission2_partitionneur/src/Org/PartitioneurBundle/Resources/views/Default/partitionneur.html.twig</file>
             <file>file:/C:/www/viquey/Mission2_partitionneur/Mission2_partitionneur/web/bundles/ajax/js/uploadForm.js</file>
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> parent of 9727fa4... Ajout de FosUserBundle au projet
 =======
 >>>>>>> parent of 9727fa4... Ajout de FosUserBundle au projet
 =======
             <file>file:/C:/www/viquey/Mission2_partitionneur/Mission2_partitionneur/app/AppKernel.php</file>
 >>>>>>> parent of 02f49f8... Revert "Ajout de FosUserBundle au projet"
+=======
+>>>>>>> parent of 9727fa4... Ajout de FosUserBundle au projet
         </group>
     </open-files>
 </project-private>
