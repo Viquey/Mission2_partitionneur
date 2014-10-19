@@ -26,7 +26,7 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="#">DaVyAn</a>
+      <span class="navbar-brand">DaVyAn</span>
     </div>
     <div class="collapse navbar-collapse">
       <ul class="nav navbar-nav">
@@ -34,7 +34,9 @@
         <li {% if app.request.attributes.get('_route') == '_partitioneur' %}class="active"{% endif %}><a href='{{ path('_partitioneur')}}'>Partitioneur</a></li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
-        <li><a href="#about">LoXXXgout</a></li>
+        {% if app.user is defined and app.user != '' %}
+            <li><a href="{{ path('_partitioneur_logout') }}">Se deconnecter</a></li>
+        {% endif %}
       </ul>
     </div><!--/.nav-collapse -->
   </div>

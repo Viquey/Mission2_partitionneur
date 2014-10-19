@@ -1,5 +1,5 @@
 org_partitioneur:
-    resource: "@OrgPartitioneurBundle/Controller/"
+    resource: "@OrgPartitioneurBundle/Controller"
     type:     annotation
     prefix:   /partitioneur
 
@@ -15,7 +15,7 @@ org_forma:
 
 login:
     pattern:   /login
-    defaults:  { _controller: UserBundle:Security:login }
+    defaults:  { _controller: AcmeDemoBundle:Secured:login }
     
 login_check:
     pattern:   /login_check

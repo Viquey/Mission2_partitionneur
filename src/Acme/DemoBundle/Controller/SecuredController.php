@@ -18,18 +18,20 @@ class SecuredController extends Controller
      * @Route("/login", name="_demo_login")
      * @Template()
      */
-    public function loginAction(Request $request)
+    public function loginAction()
     {
+        $request = $this->getRequest();
+        $session = $request->getSession();
         if ($request->attributes->has(SecurityContext::AUTHENTICATION_ERROR)) {
             $error = $request->attributes->get(SecurityContext::AUTHENTICATION_ERROR);
         } else {
             $error = $request->getSession()->get(SecurityContext::AUTHENTICATION_ERROR);
         }
 
-        return array(
-            'last_username' => $request->getSession()->get(SecurityContext::LAST_USERNAME),
+        return $this->render('AcmeDemoBundle:Secured:login.html.twig',array(
+            'last_username' => $session->get(SecurityContext::LAST_USERNAME),
             'error'         => $error,
-        );
+        ));
     }
 
     /**
@@ -55,7 +57,9 @@ class SecuredController extends Controller
      */
     public function helloAction($name)
     {
-        return array('name' => $name);
+        if (false === $this->get('security.context')->isGranted('ROLE_ADMIN')) {
+            throw new AccesDeniedException();
+        }
     }
 
     /**

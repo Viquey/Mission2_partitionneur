@@ -11,58 +11,16 @@ use Symfony\Component\HttpFoundation\Request;
 
 class DefaultController extends Controller
 {
-    /**
-     * @Route("/application",name="_partitioneur")
-     * @Template()
-     */
-    public function partitionneurAction()
-    {
-        
-        return array();
-        
-    }
     
     /**
      * @Route("/index",name="_index")
+     * @Route("/",name="_index")
      * @Template()
      */
     public function indexAction()
     {
-        
-        return array('message' => "it work !");
+        return array('message' => "Accueil");
     }
     
-
-    
-    /**
-     * @Route("/jsonpartitionne",name="_jsonPartitionne")
-     * @Template()
-     */
-    
-    public function jsonpartitionneAction(Request $request) {
         
-        $cardGrp = $request->request->get('cardGrp');
-        $csv = $request->request->get('personnes');
-        
-              
-        if (empty($cardGrp) || empty($csv) ):
-            echo("something is wrong : cardinal is empty or csv is empty");
-            return new Response('{}');
-        endif;
-
-     
-        $personnes = explode("\n", $csv);
-
-        if (!is_numeric($cardGrp) || !$personnes || $cardGrp <= 0):
-            echo("something is wrong : cardianl is not numeric or personnes is not defined or cardinal is <= 0");
-            return new Response('{}');           
-        endif;
-        
-        
-
-        $partionneur = new JsonPartition($cardGrp, $personnes);
-        return new Response($partionneur->getJson());
-    }
-    
-    
 }

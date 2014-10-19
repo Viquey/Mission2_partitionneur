@@ -123,19 +123,47 @@ class appDevUrlMatcher extends Symfony\Bundle\FrameworkBundle\Routing\Redirectab
         }
 
         if (0 === strpos($pathinfo, '/partitioneur')) {
-            // _partitioneur
-            if ($pathinfo === '/partitioneur/application') {
-                return array (  '_controller' => 'Org\\PartitioneurBundle\\Controller\\DefaultController::partitionneurAction',  '_route' => '_partitioneur',);
-            }
-
             // _index
-            if ($pathinfo === '/partitioneur/index') {
+            if (rtrim($pathinfo, '/') === '/partitioneur') {
+                if (substr($pathinfo, -1) !== '/') {
+                    return $this->redirect($pathinfo.'/', '_index');
+                }
+
                 return array (  '_controller' => 'Org\\PartitioneurBundle\\Controller\\DefaultController::indexAction',  '_route' => '_index',);
             }
 
-            // _jsonPartitionne
-            if ($pathinfo === '/partitioneur/jsonpartitionne') {
-                return array (  '_controller' => 'Org\\PartitioneurBundle\\Controller\\DefaultController::jsonpartitionneAction',  '_route' => '_jsonPartitionne',);
+            if (0 === strpos($pathinfo, '/partitioneur/secured')) {
+                if (0 === strpos($pathinfo, '/partitioneur/secured/log')) {
+                    if (0 === strpos($pathinfo, '/partitioneur/secured/login')) {
+                        // _partitioneur_login
+                        if ($pathinfo === '/partitioneur/secured/login') {
+                            return array (  '_controller' => 'Org\\PartitioneurBundle\\Controller\\SecuredController::loginAction',  '_route' => '_partitioneur_login',);
+                        }
+
+                        // _partitioneur_security_check
+                        if ($pathinfo === '/partitioneur/secured/login_check') {
+                            return array (  '_controller' => 'Org\\PartitioneurBundle\\Controller\\SecuredController::securityCheckAction',  '_route' => '_partitioneur_security_check',);
+                        }
+
+                    }
+
+                    // _partitioneur_logout
+                    if ($pathinfo === '/partitioneur/secured/logout') {
+                        return array (  '_controller' => 'Org\\PartitioneurBundle\\Controller\\SecuredController::logoutAction',  '_route' => '_partitioneur_logout',);
+                    }
+
+                }
+
+                // _partitioneur
+                if ($pathinfo === '/partitioneur/secured/application') {
+                    return array (  '_controller' => 'Org\\PartitioneurBundle\\Controller\\SecuredController::partitionneurAction',  '_route' => '_partitioneur',);
+                }
+
+                // _jsonPartitionne
+                if ($pathinfo === '/partitioneur/secured/jsonpartitionne') {
+                    return array (  '_controller' => 'Org\\PartitioneurBundle\\Controller\\SecuredController::jsonpartitionneAction',  '_route' => '_jsonPartitionne',);
+                }
+
             }
 
         }
@@ -161,7 +189,7 @@ class appDevUrlMatcher extends Symfony\Bundle\FrameworkBundle\Routing\Redirectab
         if (0 === strpos($pathinfo, '/login')) {
             // login
             if ($pathinfo === '/login') {
-                return array (  '_controller' => 'UserBundle:Security:login',  '_route' => 'login',);
+                return array (  '_controller' => 'Acme\\DemoBundle\\Controller\\SecuredController::loginAction',  '_route' => 'login',);
             }
 
             // login_check

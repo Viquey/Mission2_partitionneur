@@ -1,15 +1,4 @@
 security:
-    firewalls:
-        dev:
-            pattern:  ^/(_(profiler|wdt)|css|images|js)/
-            security: false
-
-        login:
-            security: false
-
-        secured_area:
-            anonymous: ~
-            
     encoders:
         Symfony\Component\Security\Core\User\User: plaintext
 
@@ -24,40 +13,37 @@ security:
                     user:  { password: userpass, roles: [ 'ROLE_USER' ] }
                     admin: { password: adminpass, roles: [ 'ROLE_ADMIN' ] }
 
-   
-        #secured_area:
-        #    pattern:    ^/
-        #    anonymous: ~
-        #    form_login:
-        #        login_path:  /login
-        #        check_path:  /login_check
-        
-        #dev:
-        #    pattern:  ^/(_(profiler|wdt)|css|images|js)/
-        #    security: false
+    firewalls:
+        dev:
+            pattern:  ^/(_(profiler|wdt)|css|images|js)/
+            security: false
 
-        #demo_login:
-        #    pattern:  ^/demo/secured/login$
-        #    security: false
+        demo_login:
+            pattern:  ^/demo/secured/login$
+            security: false
 
-        #demo_secured_area:
-        #    pattern:    ^/demo/secured/
-        #    form_login:
-        #        check_path: _demo_security_check
-        #        login_path: _demo_login
-        #    logout:
-        #        path:   _demo_logout
-        #        target: _demo
-            #anonymous: ~
-            #http_basic:
-            #    realm: "Secured Demo Area"
+        demo_secured_area:
+            pattern:    ^/demo/secured/
+            form_login:
+                check_path: _demo_security_check
+                login_path: _demo_login
+            logout:
+                path:   _demo_logout
+                target: _demo
+               
+        partitioneur_login:
+            pattern:  ^/partitioneur/secured/login$
+            security: false
+
+        partitioneur_secured_area:
+            pattern:    ^/partitioneur/secured/
+            form_login:
+                check_path: _partitioneur_security_check
+                login_path: _partitioneur_login
+            logout:
+                path:   _partitioneur_logout
+                target: _index
 
     access_control:
-        - { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/register, role: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/resetting, role: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/admin/, role: ROLE_ADMIN }
-        
-    role_hierarchy:
-        ROLE_ADMIN:       ROLE_USER
-        ROLE_SUPER_ADMIN: ROLE_ADMIN
+        #- { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: https }
+        - { path: ^/partitioneur/secured/, roles: ROLE_USER }
