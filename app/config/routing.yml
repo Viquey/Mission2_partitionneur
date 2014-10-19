@@ -1,7 +1,7 @@
-org_partitioneur:
-    resource: "@OrgPartitioneurBundle/Controller"
+org_partitionneur:
+    resource: "@OrgPartitionneurBundle/Controller"
     type:     annotation
-    prefix:   /partitioneur
+    prefix:   /partitionneur
 
 org_user:
     resource: "@OrgUserBundle/Controller/"

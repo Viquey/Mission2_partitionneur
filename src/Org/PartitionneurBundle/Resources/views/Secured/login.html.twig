@@ -1,0 +1,21 @@
+{% extends "::layout.html.twig" %}
+
+{% block content %}
+    <h1 class="title">Connexion</h1>
+
+    {% if error %}
+        <div>{{ error.message }}</div>
+    {% endif %}
+
+    <form action="{{ path('_partitionneur_security_check') }}" method="post">
+        <label for="username">Identifiant :</label>
+        <input type="text" id="username" name="_username" value="{{ last_username }}" />
+
+        <label for="password">Mot de passe :</label>
+        <input type="password" id="password" name="_password" />
+
+        <button type="submit">Se connecter</button>
+    </form>
+{% endblock %}
+
+{% set code = code(_self) %}

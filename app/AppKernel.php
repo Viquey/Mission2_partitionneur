@@ -18,7 +18,7 @@ class AppKernel extends Kernel
             new Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle(),
             new Org\FormaBundle\OrgFormaBundle(),
             new Org\UserBundle\OrgUserBundle(),
-            new Org\PartitioneurBundle\OrgPartitioneurBundle(),
+            new Org\PartitionneurBundle\OrgPartitionneurBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {

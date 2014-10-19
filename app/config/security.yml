@@ -31,19 +31,19 @@ security:
                 path:   _demo_logout
                 target: _demo
                
-        partitioneur_login:
-            pattern:  ^/partitioneur/secured/login$
+        partitionneur_login:
+            pattern:  ^/partitionneur/secured/login$
             security: false
 
-        partitioneur_secured_area:
-            pattern:    ^/partitioneur/secured/
+        partitionneur_secured_area:
+            pattern:    ^/partitionneur/secured/
             form_login:
-                check_path: _partitioneur_security_check
-                login_path: _partitioneur_login
+                check_path: _partitionneur_security_check
+                login_path: _partitionneur_login
             logout:
-                path:   _partitioneur_logout
+                path:   _partitionneur_logout
                 target: _index
 
     access_control:
         #- { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: https }
-        - { path: ^/partitioneur/secured/, roles: ROLE_USER }
+        - { path: ^/partitionneur/secured/, roles: ROLE_USER }

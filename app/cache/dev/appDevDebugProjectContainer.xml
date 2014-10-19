@@ -17,7 +17,7 @@
       <parameter key="SensioFrameworkExtraBundle">Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle</parameter>
       <parameter key="OrgFormaBundle">Org\FormaBundle\OrgFormaBundle</parameter>
       <parameter key="OrgUserBundle">Org\UserBundle\OrgUserBundle</parameter>
-      <parameter key="OrgPartitioneurBundle">Org\PartitioneurBundle\OrgPartitioneurBundle</parameter>
+      <parameter key="OrgPartitionneurBundle">Org\PartitionneurBundle\OrgPartitionneurBundle</parameter>
       <parameter key="AcmeDemoBundle">Acme\DemoBundle\AcmeDemoBundle</parameter>
       <parameter key="WebProfilerBundle">Symfony\Bundle\WebProfilerBundle\WebProfilerBundle</parameter>
       <parameter key="SensioDistributionBundle">Sensio\Bundle\DistributionBundle\SensioDistributionBundle</parameter>
@@ -1652,7 +1652,7 @@
             <argument type="service">
               <service class="Symfony\Component\Security\Core\User\UserChecker" public="false"/>
             </argument>
-            <argument>partitioneur_secured_area</argument>
+            <argument>partitionneur_secured_area</argument>
             <argument type="service" id="security.encoder_factory"/>
             <argument>true</argument>
           </service>
@@ -1732,14 +1732,14 @@
                 <argument>^/demo/secured/</argument>
               </service>
             </argument>
-            <argument key="security.firewall.map.context.partitioneur_login" type="service">
+            <argument key="security.firewall.map.context.partitionneur_login" type="service">
               <service class="Symfony\Component\HttpFoundation\RequestMatcher" public="false">
-                <argument>^/partitioneur/secured/login$</argument>
+                <argument>^/partitionneur/secured/login$</argument>
               </service>
             </argument>
-            <argument key="security.firewall.map.context.partitioneur_secured_area" type="service">
+            <argument key="security.firewall.map.context.partitionneur_secured_area" type="service">
               <service class="Symfony\Component\HttpFoundation\RequestMatcher" public="false">
-                <argument>^/partitioneur/secured/</argument>
+                <argument>^/partitionneur/secured/</argument>
               </service>
             </argument>
           </argument>
@@ -1771,7 +1771,7 @@
       <call method="add">
         <argument type="service">
           <service class="Symfony\Component\HttpFoundation\RequestMatcher" public="false">
-            <argument>^/partitioneur/secured/</argument>
+            <argument>^/partitionneur/secured/</argument>
           </service>
         </argument>
         <argument type="collection">
@@ -1803,8 +1803,8 @@
         <argument>null</argument>
       </call>
       <call method="registerListener">
-        <argument>partitioneur_secured_area</argument>
-        <argument>_partitioneur_logout</argument>
+        <argument>partitionneur_secured_area</argument>
+        <argument>_partitionneur_logout</argument>
         <argument>logout</argument>
         <argument>_csrf_token</argument>
         <argument>null</argument>
@@ -1953,11 +1953,11 @@
         </service>
       </argument>
     </service>
-    <service id="security.firewall.map.context.partitioneur_login" class="Symfony\Bundle\SecurityBundle\Security\FirewallContext">
+    <service id="security.firewall.map.context.partitionneur_login" class="Symfony\Bundle\SecurityBundle\Security\FirewallContext">
       <argument type="collection"/>
       <argument>null</argument>
     </service>
-    <service id="security.firewall.map.context.partitioneur_secured_area" class="Symfony\Bundle\SecurityBundle\Security\FirewallContext">
+    <service id="security.firewall.map.context.partitionneur_secured_area" class="Symfony\Bundle\SecurityBundle\Security\FirewallContext">
       <argument type="collection">
         <argument type="service" id="security.channel_listener"/>
         <argument type="service">
@@ -1966,7 +1966,7 @@
             <argument type="collection">
               <argument type="service" id="security.user.provider.concrete.in_memory"/>
             </argument>
-            <argument>partitioneur_secured_area</argument>
+            <argument>partitionneur_secured_area</argument>
             <argument type="service" id="monolog.logger.security" on-invalid="null"/>
             <argument type="service" id="debug.event_dispatcher" on-invalid="null"/>
           </service>
@@ -1984,7 +1984,7 @@
             <argument type="collection">
               <argument key="csrf_parameter">_csrf_token</argument>
               <argument key="intention">logout</argument>
-              <argument key="logout_path">_partitioneur_logout</argument>
+              <argument key="logout_path">_partitionneur_logout</argument>
             </argument>
             <call method="addHandler">
               <argument type="service" id="security.logout.handler.session"/>
@@ -1993,24 +1993,24 @@
         </argument>
         <argument type="service">
           <service class="Symfony\Component\Security\Http\Firewall\UsernamePasswordFormAuthenticationListener" public="false">
-            <tag name="security.remember_me_aware" id="partitioneur_secured_area" provider="security.user.provider.concrete.in_memory"/>
+            <tag name="security.remember_me_aware" id="partitionneur_secured_area" provider="security.user.provider.concrete.in_memory"/>
             <argument type="service" id="security.context"/>
             <argument type="service" id="security.authentication.manager"/>
             <argument type="service" id="security.authentication.session_strategy"/>
             <argument type="service" id="security.http_utils"/>
-            <argument>partitioneur_secured_area</argument>
+            <argument>partitionneur_secured_area</argument>
             <argument type="service">
               <service class="Symfony\Component\Security\Http\Authentication\DefaultAuthenticationSuccessHandler" public="false">
                 <argument type="service" id="security.http_utils"/>
                 <argument type="collection">
-                  <argument key="login_path">_partitioneur_login</argument>
+                  <argument key="login_path">_partitionneur_login</argument>
                   <argument key="always_use_default_target_path">false</argument>
                   <argument key="default_target_path">/</argument>
                   <argument key="target_path_parameter">_target_path</argument>
                   <argument key="use_referer">false</argument>
                 </argument>
                 <call method="setProviderKey">
-                  <argument>partitioneur_secured_area</argument>
+                  <argument>partitionneur_secured_area</argument>
                 </call>
               </service>
             </argument>
@@ -2019,7 +2019,7 @@
                 <argument type="service" id="http_kernel"/>
                 <argument type="service" id="security.http_utils"/>
                 <argument type="collection">
-                  <argument key="login_path">_partitioneur_login</argument>
+                  <argument key="login_path">_partitionneur_login</argument>
                   <argument key="failure_path">null</argument>
                   <argument key="failure_forward">false</argument>
                   <argument key="failure_path_parameter">_failure_path</argument>
@@ -2028,7 +2028,7 @@
               </service>
             </argument>
             <argument type="collection">
-              <argument key="check_path">_partitioneur_security_check</argument>
+              <argument key="check_path">_partitionneur_security_check</argument>
               <argument key="use_forward">false</argument>
               <argument key="require_previous_session">true</argument>
               <argument key="username_parameter">_username</argument>
@@ -2049,12 +2049,12 @@
           <argument type="service" id="security.context"/>
           <argument type="service" id="security.authentication.trust_resolver"/>
           <argument type="service" id="security.http_utils"/>
-          <argument>partitioneur_secured_area</argument>
+          <argument>partitionneur_secured_area</argument>
           <argument type="service">
             <service class="Symfony\Component\Security\Http\EntryPoint\FormAuthenticationEntryPoint" public="false">
               <argument type="service" id="http_kernel"/>
               <argument type="service" id="security.http_utils"/>
-              <argument>_partitioneur_login</argument>
+              <argument>_partitionneur_login</argument>
               <argument>false</argument>
             </service>
           </argument>
@@ -2332,7 +2332,7 @@
           <call method="setEntityNamespaces">
             <argument type="collection">
               <argument key="OrgUserBundle">Org\UserBundle\Entity</argument>
-              <argument key="OrgPartitioneurBundle">Org\PartitioneurBundle\Entity</argument>
+              <argument key="OrgPartitionneurBundle">Org\PartitionneurBundle\Entity</argument>
             </argument>
           </call>
           <call method="setMetadataCacheImpl">
@@ -2371,7 +2371,7 @@
                       <argument type="service" id="annotation_reader"/>
                       <argument type="collection">
                         <argument>C:\www\viquey\Mission2_partitionneur\Mission2_partitionneur\src\Org\UserBundle\Entity</argument>
-                        <argument>C:\www\viquey\Mission2_partitionneur\Mission2_partitionneur\src\Org\PartitioneurBundle\Entity</argument>
+                        <argument>C:\www\viquey\Mission2_partitionneur\Mission2_partitionneur\src\Org\PartitionneurBundle\Entity</argument>
                       </argument>
                     </service>
                   </argument>
@@ -2383,11 +2383,11 @@
                       <argument type="service" id="annotation_reader"/>
                       <argument type="collection">
                         <argument>C:\www\viquey\Mission2_partitionneur\Mission2_partitionneur\src\Org\UserBundle\Entity</argument>
-                        <argument>C:\www\viquey\Mission2_partitionneur\Mission2_partitionneur\src\Org\PartitioneurBundle\Entity</argument>
+                        <argument>C:\www\viquey\Mission2_partitionneur\Mission2_partitionneur\src\Org\PartitionneurBundle\Entity</argument>
                       </argument>
                     </service>
                   </argument>
-                  <argument>Org\PartitioneurBundle\Entity</argument>
+                  <argument>Org\PartitionneurBundle\Entity</argument>
                 </call>
               </service>
             </argument>
@@ -2809,8 +2809,8 @@
         <argument>OrgUser</argument>
       </call>
       <call method="addPath">
-        <argument>C:\www\viquey\Mission2_partitionneur\Mission2_partitionneur\src\Org\PartitioneurBundle/Resources/views</argument>
-        <argument>OrgPartitioneur</argument>
+        <argument>C:\www\viquey\Mission2_partitionneur\Mission2_partitionneur\src\Org\PartitionneurBundle/Resources/views</argument>
+        <argument>OrgPartitionneur</argument>
       </call>
       <call method="addPath">
         <argument>C:\www\viquey\Mission2_partitionneur\Mission2_partitionneur\src\Acme\DemoBundle/Resources/views</argument>

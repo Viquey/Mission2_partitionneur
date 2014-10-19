@@ -150,8 +150,8 @@ class appDevDebugProjectContainer extends Container
             'security.firewall.map.context.demo_login' => 'getSecurity_Firewall_Map_Context_DemoLoginService',
             'security.firewall.map.context.demo_secured_area' => 'getSecurity_Firewall_Map_Context_DemoSecuredAreaService',
             'security.firewall.map.context.dev' => 'getSecurity_Firewall_Map_Context_DevService',
-            'security.firewall.map.context.partitioneur_login' => 'getSecurity_Firewall_Map_Context_PartitioneurLoginService',
-            'security.firewall.map.context.partitioneur_secured_area' => 'getSecurity_Firewall_Map_Context_PartitioneurSecuredAreaService',
+            'security.firewall.map.context.partitionneur_login' => 'getSecurity_Firewall_Map_Context_PartitionneurLoginService',
+            'security.firewall.map.context.partitionneur_secured_area' => 'getSecurity_Firewall_Map_Context_PartitionneurSecuredAreaService',
             'security.http_utils' => 'getSecurity_HttpUtilsService',
             'security.logout.handler.session' => 'getSecurity_Logout_Handler_SessionService',
             'security.rememberme.response_listener' => 'getSecurity_Rememberme_ResponseListenerService',
@@ -580,14 +580,14 @@ class appDevDebugProjectContainer extends Container
         $d = new \Doctrine\Common\Cache\ArrayCache();
         $d->setNamespace('sf2orm_default_0cc3d3111725e7ab1150e87e8983dd5e1940a22fed749dcfef8d6478228e0dbc');
 
-        $e = new \Doctrine\ORM\Mapping\Driver\AnnotationDriver($a, array(0 => 'C:\\www\\viquey\\Mission2_partitionneur\\Mission2_partitionneur\\src\\Org\\UserBundle\\Entity', 1 => 'C:\\www\\viquey\\Mission2_partitionneur\\Mission2_partitionneur\\src\\Org\\PartitioneurBundle\\Entity'));
+        $e = new \Doctrine\ORM\Mapping\Driver\AnnotationDriver($a, array(0 => 'C:\\www\\viquey\\Mission2_partitionneur\\Mission2_partitionneur\\src\\Org\\UserBundle\\Entity', 1 => 'C:\\www\\viquey\\Mission2_partitionneur\\Mission2_partitionneur\\src\\Org\\PartitionneurBundle\\Entity'));
 
         $f = new \Doctrine\ORM\Mapping\Driver\DriverChain();
         $f->addDriver($e, 'Org\\UserBundle\\Entity');
-        $f->addDriver($e, 'Org\\PartitioneurBundle\\Entity');
+        $f->addDriver($e, 'Org\\PartitionneurBundle\\Entity');
 
         $g = new \Doctrine\ORM\Configuration();
-        $g->setEntityNamespaces(array('OrgUserBundle' => 'Org\\UserBundle\\Entity', 'OrgPartitioneurBundle' => 'Org\\PartitioneurBundle\\Entity'));
+        $g->setEntityNamespaces(array('OrgUserBundle' => 'Org\\UserBundle\\Entity', 'OrgPartitionneurBundle' => 'Org\\PartitionneurBundle\\Entity'));
         $g->setMetadataCacheImpl($b);
         $g->setQueryCacheImpl($c);
         $g->setResultCacheImpl($d);
@@ -1810,7 +1810,7 @@ class appDevDebugProjectContainer extends Container
      */
     protected function getSecurity_FirewallService()
     {
-        return $this->services['security.firewall'] = new \Symfony\Component\Security\Http\Firewall(new \Symfony\Bundle\SecurityBundle\Security\FirewallMap($this, array('security.firewall.map.context.dev' => new \Symfony\Component\HttpFoundation\RequestMatcher('^/(_(profiler|wdt)|css|images|js)/'), 'security.firewall.map.context.demo_login' => new \Symfony\Component\HttpFoundation\RequestMatcher('^/demo/secured/login$'), 'security.firewall.map.context.demo_secured_area' => new \Symfony\Component\HttpFoundation\RequestMatcher('^/demo/secured/'), 'security.firewall.map.context.partitioneur_login' => new \Symfony\Component\HttpFoundation\RequestMatcher('^/partitioneur/secured/login$'), 'security.firewall.map.context.partitioneur_secured_area' => new \Symfony\Component\HttpFoundation\RequestMatcher('^/partitioneur/secured/'))), $this->get('debug.event_dispatcher'));
+        return $this->services['security.firewall'] = new \Symfony\Component\Security\Http\Firewall(new \Symfony\Bundle\SecurityBundle\Security\FirewallMap($this, array('security.firewall.map.context.dev' => new \Symfony\Component\HttpFoundation\RequestMatcher('^/(_(profiler|wdt)|css|images|js)/'), 'security.firewall.map.context.demo_login' => new \Symfony\Component\HttpFoundation\RequestMatcher('^/demo/secured/login$'), 'security.firewall.map.context.demo_secured_area' => new \Symfony\Component\HttpFoundation\RequestMatcher('^/demo/secured/'), 'security.firewall.map.context.partitionneur_login' => new \Symfony\Component\HttpFoundation\RequestMatcher('^/partitionneur/secured/login$'), 'security.firewall.map.context.partitionneur_secured_area' => new \Symfony\Component\HttpFoundation\RequestMatcher('^/partitionneur/secured/'))), $this->get('debug.event_dispatcher'));
     }
 
     /**
@@ -1865,27 +1865,27 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * Gets the 'security.firewall.map.context.partitioneur_login' service.
+     * Gets the 'security.firewall.map.context.partitionneur_login' service.
      *
      * This service is shared.
      * This method always returns the same instance of the service.
      *
      * @return \Symfony\Bundle\SecurityBundle\Security\FirewallContext A Symfony\Bundle\SecurityBundle\Security\FirewallContext instance.
      */
-    protected function getSecurity_Firewall_Map_Context_PartitioneurLoginService()
+    protected function getSecurity_Firewall_Map_Context_PartitionneurLoginService()
     {
-        return $this->services['security.firewall.map.context.partitioneur_login'] = new \Symfony\Bundle\SecurityBundle\Security\FirewallContext(array(), NULL);
+        return $this->services['security.firewall.map.context.partitionneur_login'] = new \Symfony\Bundle\SecurityBundle\Security\FirewallContext(array(), NULL);
     }
 
     /**
-     * Gets the 'security.firewall.map.context.partitioneur_secured_area' service.
+     * Gets the 'security.firewall.map.context.partitionneur_secured_area' service.
      *
      * This service is shared.
      * This method always returns the same instance of the service.
      *
      * @return \Symfony\Bundle\SecurityBundle\Security\FirewallContext A Symfony\Bundle\SecurityBundle\Security\FirewallContext instance.
      */
-    protected function getSecurity_Firewall_Map_Context_PartitioneurSecuredAreaService()
+    protected function getSecurity_Firewall_Map_Context_PartitionneurSecuredAreaService()
     {
         $a = $this->get('security.context');
         $b = $this->get('monolog.logger.security', ContainerInterface::NULL_ON_INVALID_REFERENCE);
@@ -1893,13 +1893,13 @@ class appDevDebugProjectContainer extends Container
         $d = $this->get('security.http_utils');
         $e = $this->get('http_kernel');
 
-        $f = new \Symfony\Component\Security\Http\Firewall\LogoutListener($a, $d, new \Symfony\Component\Security\Http\Logout\DefaultLogoutSuccessHandler($d, '_index'), array('csrf_parameter' => '_csrf_token', 'intention' => 'logout', 'logout_path' => '_partitioneur_logout'));
+        $f = new \Symfony\Component\Security\Http\Firewall\LogoutListener($a, $d, new \Symfony\Component\Security\Http\Logout\DefaultLogoutSuccessHandler($d, '_index'), array('csrf_parameter' => '_csrf_token', 'intention' => 'logout', 'logout_path' => '_partitionneur_logout'));
         $f->addHandler($this->get('security.logout.handler.session'));
 
-        $g = new \Symfony\Component\Security\Http\Authentication\DefaultAuthenticationSuccessHandler($d, array('login_path' => '_partitioneur_login', 'always_use_default_target_path' => false, 'default_target_path' => '/', 'target_path_parameter' => '_target_path', 'use_referer' => false));
-        $g->setProviderKey('partitioneur_secured_area');
+        $g = new \Symfony\Component\Security\Http\Authentication\DefaultAuthenticationSuccessHandler($d, array('login_path' => '_partitionneur_login', 'always_use_default_target_path' => false, 'default_target_path' => '/', 'target_path_parameter' => '_target_path', 'use_referer' => false));
+        $g->setProviderKey('partitionneur_secured_area');
 
-        return $this->services['security.firewall.map.context.partitioneur_secured_area'] = new \Symfony\Bundle\SecurityBundle\Security\FirewallContext(array(0 => $this->get('security.channel_listener'), 1 => new \Symfony\Component\Security\Http\Firewall\ContextListener($a, array(0 => $this->get('security.user.provider.concrete.in_memory')), 'partitioneur_secured_area', $b, $c), 2 => $f, 3 => new \Symfony\Component\Security\Http\Firewall\UsernamePasswordFormAuthenticationListener($a, $this->get('security.authentication.manager'), $this->get('security.authentication.session_strategy'), $d, 'partitioneur_secured_area', $g, new \Symfony\Component\Security\Http\Authentication\DefaultAuthenticationFailureHandler($e, $d, array('login_path' => '_partitioneur_login', 'failure_path' => NULL, 'failure_forward' => false, 'failure_path_parameter' => '_failure_path'), $b), array('check_path' => '_partitioneur_security_check', 'use_forward' => false, 'require_previous_session' => true, 'username_parameter' => '_username', 'password_parameter' => '_password', 'csrf_parameter' => '_csrf_token', 'intention' => 'authenticate', 'post_only' => true), $b, $c, NULL), 4 => $this->get('security.access_listener')), new \Symfony\Component\Security\Http\Firewall\ExceptionListener($a, $this->get('security.authentication.trust_resolver'), $d, 'partitioneur_secured_area', new \Symfony\Component\Security\Http\EntryPoint\FormAuthenticationEntryPoint($e, $d, '_partitioneur_login', false), NULL, NULL, $b));
+        return $this->services['security.firewall.map.context.partitionneur_secured_area'] = new \Symfony\Bundle\SecurityBundle\Security\FirewallContext(array(0 => $this->get('security.channel_listener'), 1 => new \Symfony\Component\Security\Http\Firewall\ContextListener($a, array(0 => $this->get('security.user.provider.concrete.in_memory')), 'partitionneur_secured_area', $b, $c), 2 => $f, 3 => new \Symfony\Component\Security\Http\Firewall\UsernamePasswordFormAuthenticationListener($a, $this->get('security.authentication.manager'), $this->get('security.authentication.session_strategy'), $d, 'partitionneur_secured_area', $g, new \Symfony\Component\Security\Http\Authentication\DefaultAuthenticationFailureHandler($e, $d, array('login_path' => '_partitionneur_login', 'failure_path' => NULL, 'failure_forward' => false, 'failure_path_parameter' => '_failure_path'), $b), array('check_path' => '_partitionneur_security_check', 'use_forward' => false, 'require_previous_session' => true, 'username_parameter' => '_username', 'password_parameter' => '_password', 'csrf_parameter' => '_csrf_token', 'intention' => 'authenticate', 'post_only' => true), $b, $c, NULL), 4 => $this->get('security.access_listener')), new \Symfony\Component\Security\Http\Firewall\ExceptionListener($a, $this->get('security.authentication.trust_resolver'), $d, 'partitionneur_secured_area', new \Symfony\Component\Security\Http\EntryPoint\FormAuthenticationEntryPoint($e, $d, '_partitionneur_login', false), NULL, NULL, $b));
     }
 
     /**
@@ -2420,7 +2420,7 @@ class appDevDebugProjectContainer extends Container
         $this->services['templating.helper.logout_url'] = $instance = new \Symfony\Bundle\SecurityBundle\Templating\Helper\LogoutUrlHelper($this, $this->get('router'));
 
         $instance->registerListener('demo_secured_area', '_demo_logout', 'logout', '_csrf_token', NULL);
-        $instance->registerListener('partitioneur_secured_area', '_partitioneur_logout', 'logout', '_csrf_token', NULL);
+        $instance->registerListener('partitionneur_secured_area', '_partitionneur_logout', 'logout', '_csrf_token', NULL);
 
         return $instance;
     }
@@ -3006,7 +3006,7 @@ class appDevDebugProjectContainer extends Container
         $instance->addPath('C:\\www\\viquey\\Mission2_partitionneur\\Mission2_partitionneur\\vendor\\doctrine\\doctrine-bundle\\Doctrine\\Bundle\\DoctrineBundle/Resources/views', 'Doctrine');
         $instance->addPath('C:\\www\\viquey\\Mission2_partitionneur\\Mission2_partitionneur\\src\\Org\\FormaBundle/Resources/views', 'OrgForma');
         $instance->addPath('C:\\www\\viquey\\Mission2_partitionneur\\Mission2_partitionneur\\src\\Org\\UserBundle/Resources/views', 'OrgUser');
-        $instance->addPath('C:\\www\\viquey\\Mission2_partitionneur\\Mission2_partitionneur\\src\\Org\\PartitioneurBundle/Resources/views', 'OrgPartitioneur');
+        $instance->addPath('C:\\www\\viquey\\Mission2_partitionneur\\Mission2_partitionneur\\src\\Org\\PartitionneurBundle/Resources/views', 'OrgPartitionneur');
         $instance->addPath('C:\\www\\viquey\\Mission2_partitionneur\\Mission2_partitionneur\\src\\Acme\\DemoBundle/Resources/views', 'AcmeDemo');
         $instance->addPath('C:\\www\\viquey\\Mission2_partitionneur\\Mission2_partitionneur\\vendor\\symfony\\symfony\\src\\Symfony\\Bundle\\WebProfilerBundle/Resources/views', 'WebProfiler');
         $instance->addPath('C:\\www\\viquey\\Mission2_partitionneur\\Mission2_partitionneur\\vendor\\sensio\\distribution-bundle\\Sensio\\Bundle\\DistributionBundle/Resources/views', 'SensioDistribution');
@@ -3261,7 +3261,7 @@ class appDevDebugProjectContainer extends Container
     {
         $this->services['security.access_map'] = $instance = new \Symfony\Component\Security\Http\AccessMap();
 
-        $instance->add(new \Symfony\Component\HttpFoundation\RequestMatcher('^/partitioneur/secured/'), array(0 => 'ROLE_USER'), NULL);
+        $instance->add(new \Symfony\Component\HttpFoundation\RequestMatcher('^/partitionneur/secured/'), array(0 => 'ROLE_USER'), NULL);
 
         return $instance;
     }
@@ -3285,7 +3285,7 @@ class appDevDebugProjectContainer extends Container
 
         $c = new \Symfony\Component\Security\Core\User\UserChecker();
 
-        $this->services['security.authentication.manager'] = $instance = new \Symfony\Component\Security\Core\Authentication\AuthenticationProviderManager(array(0 => new \Symfony\Component\Security\Core\Authentication\Provider\DaoAuthenticationProvider($a, $c, 'demo_secured_area', $b, true), 1 => new \Symfony\Component\Security\Core\Authentication\Provider\DaoAuthenticationProvider($a, $c, 'partitioneur_secured_area', $b, true)), true);
+        $this->services['security.authentication.manager'] = $instance = new \Symfony\Component\Security\Core\Authentication\AuthenticationProviderManager(array(0 => new \Symfony\Component\Security\Core\Authentication\Provider\DaoAuthenticationProvider($a, $c, 'demo_secured_area', $b, true), 1 => new \Symfony\Component\Security\Core\Authentication\Provider\DaoAuthenticationProvider($a, $c, 'partitionneur_secured_area', $b, true)), true);
 
         $instance->setEventDispatcher($this->get('debug.event_dispatcher'));
 
@@ -3570,7 +3570,7 @@ class appDevDebugProjectContainer extends Container
                 'SensioFrameworkExtraBundle' => 'Sensio\\Bundle\\FrameworkExtraBundle\\SensioFrameworkExtraBundle',
                 'OrgFormaBundle' => 'Org\\FormaBundle\\OrgFormaBundle',
                 'OrgUserBundle' => 'Org\\UserBundle\\OrgUserBundle',
-                'OrgPartitioneurBundle' => 'Org\\PartitioneurBundle\\OrgPartitioneurBundle',
+                'OrgPartitionneurBundle' => 'Org\\PartitionneurBundle\\OrgPartitionneurBundle',
                 'AcmeDemoBundle' => 'Acme\\DemoBundle\\AcmeDemoBundle',
                 'WebProfilerBundle' => 'Symfony\\Bundle\\WebProfilerBundle\\WebProfilerBundle',
                 'SensioDistributionBundle' => 'Sensio\\Bundle\\DistributionBundle\\SensioDistributionBundle',
