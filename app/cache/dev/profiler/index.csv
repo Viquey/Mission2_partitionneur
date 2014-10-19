@@ -926,3 +926,5 @@ db2295,::1,GET,http://localhost/viquey/Mission2_partitionneur/Mission2_partition
 53bc8b,::1,POST,http://localhost/viquey/Mission2_partitionneur/Mission2_partitionneur/web/app_dev.php/partitioneur/secured/jsonpartitionne,1413742561,
 b6eaa7,::1,POST,http://localhost/viquey/Mission2_partitionneur/Mission2_partitionneur/web/app_dev.php/partitioneur/secured/jsonpartitionne,1413742564,
 84e140,::1,POST,http://localhost/viquey/Mission2_partitionneur/Mission2_partitionneur/web/app_dev.php/partitioneur/secured/jsonpartitionne,1413742566,
+73b392,::1,GET,http://localhost/viquey/Mission2_partitionneur/Mission2_partitionneur/web/app_dev.php/partitioneur/,1413744139,
+32cafc,::1,GET,http://localhost/viquey/Mission2_partitionneur/Mission2_partitionneur/web/app_dev.php/partitioneur/secured/application,1413744140,
