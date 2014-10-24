@@ -122,48 +122,61 @@ class appDevUrlMatcher extends Symfony\Bundle\FrameworkBundle\Routing\Redirectab
 
         }
 
-        if (0 === strpos($pathinfo, '/partitionneur')) {
+        if (0 === strpos($pathinfo, '/partitionneur/secured')) {
             // _index
-            if (rtrim($pathinfo, '/') === '/partitionneur') {
+            if (rtrim($pathinfo, '/') === '/partitionneur/secured') {
                 if (substr($pathinfo, -1) !== '/') {
                     return $this->redirect($pathinfo.'/', '_index');
                 }
 
-                return array (  '_controller' => 'Org\\PartitionneurBundle\\Controller\\DefaultController::indexAction',  '_route' => '_index',);
+                return array (  '_controller' => 'Org\\PartitionneurBundle\\Controller\\SecuredController::indexAction',  '_route' => '_index',);
             }
 
-            if (0 === strpos($pathinfo, '/partitionneur/secured')) {
-                if (0 === strpos($pathinfo, '/partitionneur/secured/log')) {
-                    if (0 === strpos($pathinfo, '/partitionneur/secured/login')) {
-                        // _partitionneur_login
-                        if ($pathinfo === '/partitionneur/secured/login') {
-                            return array (  '_controller' => 'Org\\PartitionneurBundle\\Controller\\SecuredController::loginAction',  '_route' => '_partitionneur_login',);
-                        }
-
-                        // _partitionneur_security_check
-                        if ($pathinfo === '/partitionneur/secured/login_check') {
-                            return array (  '_controller' => 'Org\\PartitionneurBundle\\Controller\\SecuredController::securityCheckAction',  '_route' => '_partitionneur_security_check',);
-                        }
-
-                    }
-
-                    // _partitionneur_logout
-                    if ($pathinfo === '/partitionneur/secured/logout') {
-                        return array (  '_controller' => 'Org\\PartitionneurBundle\\Controller\\SecuredController::logoutAction',  '_route' => '_partitionneur_logout',);
-                    }
-
-                }
-
+            if (0 === strpos($pathinfo, '/partitionneur/secured/a')) {
                 // _partitionneur
                 if ($pathinfo === '/partitionneur/secured/application') {
                     return array (  '_controller' => 'Org\\PartitionneurBundle\\Controller\\SecuredController::partitionneurAction',  '_route' => '_partitionneur',);
                 }
 
-                // _jsonPartitionne
-                if ($pathinfo === '/partitionneur/secured/jsonpartitionne') {
-                    return array (  '_controller' => 'Org\\PartitionneurBundle\\Controller\\SecuredController::jsonpartitionneAction',  '_route' => '_jsonPartitionne',);
+                if (0 === strpos($pathinfo, '/partitionneur/secured/ad')) {
+                    // _administration
+                    if ($pathinfo === '/partitionneur/secured/administration') {
+                        return array (  '_controller' => 'Org\\PartitionneurBundle\\Controller\\SecuredController::administrationAction',  '_route' => '_administration',);
+                    }
+
+                    // _addUser
+                    if ($pathinfo === '/partitionneur/secured/addUser') {
+                        return array (  '_controller' => 'Org\\PartitionneurBundle\\Controller\\SecuredController::addUserAction',  '_route' => '_addUser',);
+                    }
+
                 }
 
+            }
+
+            if (0 === strpos($pathinfo, '/partitionneur/secured/log')) {
+                if (0 === strpos($pathinfo, '/partitionneur/secured/login')) {
+                    // _partitionneur_login
+                    if ($pathinfo === '/partitionneur/secured/login') {
+                        return array (  '_controller' => 'Org\\PartitionneurBundle\\Controller\\SecuredController::loginAction',  '_route' => '_partitionneur_login',);
+                    }
+
+                    // _partitionneur_security_check
+                    if ($pathinfo === '/partitionneur/secured/login_check') {
+                        return array (  '_controller' => 'Org\\PartitionneurBundle\\Controller\\SecuredController::securityCheckAction',  '_route' => '_partitionneur_security_check',);
+                    }
+
+                }
+
+                // _partitionneur_logout
+                if ($pathinfo === '/partitionneur/secured/logout') {
+                    return array (  '_controller' => 'Org\\PartitionneurBundle\\Controller\\SecuredController::logoutAction',  '_route' => '_partitionneur_logout',);
+                }
+
+            }
+
+            // _jsonPartitionne
+            if ($pathinfo === '/partitionneur/secured/jsonpartitionne') {
+                return array (  '_controller' => 'Org\\PartitionneurBundle\\Controller\\SecuredController::jsonpartitionneAction',  '_route' => '_jsonPartitionne',);
             }
 
         }

@@ -11,16 +11,5 @@ use Symfony\Component\HttpFoundation\Request;
 
 class DefaultController extends Controller
 {
-    
-    /**
-     * @Route("/index",name="_index")
-     * @Route("/",name="_index")
-     * @Template()
-     */
-    public function indexAction()
-    {
-        return array('message' => "Accueil");
-    }
-    
-        
+            
 }

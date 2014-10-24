@@ -10,12 +10,87 @@ use Symfony\Component\HttpFoundation\Response;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Org\UserBundle\Entity\User;
+use Symfony\Component\Security\Core\Encoder\MessageDigestPasswordEncoder;
 
 /**
  * @Route("/secured")
  */
 class SecuredController extends Controller
 {
+    
+    /**
+     * @Route("/index",name="_index")
+     * @Route("/",name="_index")
+     * @Template()
+     */
+    public function indexAction()
+    {
+        return array();
+    }
+    
+     /**
+     * @Route("/application",name="_partitionneur")
+     * @Template()
+     */
+    public function partitionneurAction()
+    {
+        
+        return array();
+        
+    }
+    
+     /**
+     * @Route("/administration",name="_administration")
+     * @Template()
+     */
+    public function administrationAction()
+    {
+        
+        return array();
+        
+    }
+    
+    /**
+     * @Route("/addUser",name="_addUser")
+     * @Template()
+     */
+    public function addUserAction(Request $request)
+    {      
+        $user = new User();
+        $user->setUsername('');
+        $user->setPassword('');
+        $user->setEmail('');
+
+        $form = $this->createFormBuilder($user)
+            ->add('username', 'text')
+            ->add('password', 'text')
+            ->add('email', 'text')
+            ->add('save', 'submit')
+            ->getForm();
+        
+        $form->handleRequest($request);
+
+        if ($form->isValid()) {
+            
+            //cryptage du pswd
+            $factory = $this->get('security.encoder_factory');
+            $encoder = $factory->getEncoder($user);
+            $password = $encoder->encodePassword($user->getPassword(), $user->getSalt());
+            $user->setPassword($password);
+            
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($user);
+            $em->flush();
+
+            return new Response('Id de l\'user créé : '.$user->getId());
+        }
+
+        return $this->render('OrgPartitionneurBundle:Secured:addUser.html.twig', array(
+            'form' => $form->createView(),
+        ));       
+    }
+    
     /**
      * @Route("/login", name="_partitionneur_login")
      * @Template()
@@ -50,18 +125,6 @@ class SecuredController extends Controller
     public function logoutAction()
     {
         // The security layer will intercept this request
-    }
-
-   
-    /**
-     * @Route("/application",name="_partitionneur")
-     * @Template()
-     */
-    public function partitionneurAction()
-    {
-        
-        return array();
-        
     }
     
     /**

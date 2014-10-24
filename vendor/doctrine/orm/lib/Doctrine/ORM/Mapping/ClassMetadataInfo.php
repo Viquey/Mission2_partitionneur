@@ -863,7 +863,7 @@ class ClassMetadataInfo implements ClassMetadata
      *
      * @return object
      */
-    public function newInstance()
+    /*public function newInstance()
     {
         if ($this->_prototype === null) {
             if (PHP_VERSION_ID === 50429 || PHP_VERSION_ID === 50513) {
@@ -873,6 +873,19 @@ class ClassMetadataInfo implements ClassMetadata
             }
         }
 
+        return clone $this->_prototype;
+    }*/
+    
+    public function newInstance()
+    {
+        if ($this->_prototype === null) {
+            // $this->_prototype = unserialize(sprintf('O:%d:"%s":0:{}', strlen($this->name), $this->name));
+            if (PHP_VERSION_ID === 50429 || PHP_VERSION_ID === 50513 || PHP_VERSION_ID >= 50600) {
+                $this->_prototype = $this->reflClass->newInstanceWithoutConstructor();
+            } else {
+                $this->_prototype = unserialize(sprintf('O:%d:"%s":0:{}', strlen($this->name), $this->name));
+            }
+        }
         return clone $this->_prototype;
     }
     /**
