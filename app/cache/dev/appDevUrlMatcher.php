@@ -144,9 +144,17 @@ class appDevUrlMatcher extends Symfony\Bundle\FrameworkBundle\Routing\Redirectab
                         return array (  '_controller' => 'Org\\PartitionneurBundle\\Controller\\SecuredController::administrationAction',  '_route' => '_administration',);
                     }
 
-                    // _addUser
-                    if ($pathinfo === '/partitionneur/secured/addUser') {
-                        return array (  '_controller' => 'Org\\PartitionneurBundle\\Controller\\SecuredController::addUserAction',  '_route' => '_addUser',);
+                    if (0 === strpos($pathinfo, '/partitionneur/secured/add')) {
+                        // _addUser
+                        if ($pathinfo === '/partitionneur/secured/addUser') {
+                            return array (  '_controller' => 'Org\\PartitionneurBundle\\Controller\\SecuredController::addUserAction',  '_route' => '_addUser',);
+                        }
+
+                        // _addClasse
+                        if ($pathinfo === '/partitionneur/secured/addClasse') {
+                            return array (  '_controller' => 'Org\\PartitionneurBundle\\Controller\\SecuredController::addClasseAction',  '_route' => '_addClasse',);
+                        }
+
                     }
 
                 }

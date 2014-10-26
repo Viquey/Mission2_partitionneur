@@ -2,9 +2,19 @@
 
 {% block title parent() ~ "Page de test" %}
     
-   
-    
 {% block content %}
+    
+    {% block javascript %}
+        {% if app.request.get('userCreated') == 'true'%}       
+            <script type="text/javascript">alert('Professeur créé.');</script>       
+        {% endif %}
+        
+        {% if app.request.get('classeCreated') == 'true'%}
+            <script type="text/javascript">alert('Classe créée.');</script>
+        {% endif %}
+    {% endblock %}
+    
      Administration<br/>
-     <a href='{{ path('_addUser')}}'>Ajouter un professeur</a>
+     <a href='{{ path('_addUser')}}'>Ajouter un professeur</a><br/>
+     <a href='{{ path('_addClasse')}}'>Ajouter une classe</a><br/>
 {% endblock %}

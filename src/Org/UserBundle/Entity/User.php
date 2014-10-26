@@ -149,6 +149,19 @@ class User implements UserInterface, \Serializable{
 
         return $this;
     }
+    
+    /**
+     * Set groups
+     *
+     * @param Group $group
+     * @return User
+     */
+    public function setGroups($group)
+    {
+        $this->groups[] = $group;
+
+        return $this;
+    }
 
     /**
      * Set email

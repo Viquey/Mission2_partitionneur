@@ -9,9 +9,8 @@ use Org\PartitionneurBundle\Entity\JsonPartition;
 use Symfony\Component\HttpFoundation\Response;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Org\UserBundle\Entity\User;
-use Symfony\Component\Security\Core\Encoder\MessageDigestPasswordEncoder;
+use Org\PartitionneurBundle\Entity\Classe;
 
 /**
  * @Route("/secured")
@@ -56,11 +55,16 @@ class SecuredController extends Controller
      * @Template()
      */
     public function addUserAction(Request $request)
-    {      
+    {   
+        $group = $this->getDoctrine()
+            ->getRepository('OrgUserBundle:Group')
+            ->find(1);
+        
         $user = new User();
         $user->setUsername('');
         $user->setPassword('');
         $user->setEmail('');
+        $user->setGroups($group);
 
         $form = $this->createFormBuilder($user)
             ->add('username', 'text')
@@ -83,12 +87,42 @@ class SecuredController extends Controller
             $em->persist($user);
             $em->flush();
 
-            return new Response('Id de l\'user créé : '.$user->getId());
+            return $this->redirect( $this->generateUrl('_administration', array('userCreated'=>'true')));
         }
 
         return $this->render('OrgPartitionneurBundle:Secured:addUser.html.twig', array(
             'form' => $form->createView(),
         ));       
+    }
+    
+    /**
+     * @Route("/addClasse",name="_addClasse")
+     * @Template()
+     */
+    public function addClasseAction(Request $request)
+    {
+        $classe = new Classe();
+        $classe->setName('');
+
+        $form = $this->createFormBuilder($classe)
+            ->add('name', 'text')
+            ->add('Ajouter', 'submit')
+            ->getForm();
+        
+        $form->handleRequest($request);
+
+        if ($form->isValid()) {
+            
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($classe);
+            $em->flush();
+
+            return $this->redirect( $this->generateUrl('_administration', array('classeCreated'=>'true')));
+        }
+
+        return $this->render('OrgPartitionneurBundle:Secured:addUser.html.twig', array(
+            'form' => $form->createView(),
+        ));   
     }
     
     /**
