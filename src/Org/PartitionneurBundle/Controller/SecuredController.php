@@ -65,7 +65,7 @@ class SecuredController extends Controller
         $user->setPassword('');
         $user->setEmail('');
         $user->setGroups($group);
-
+        
         $form = $this->createFormBuilder($user)
             ->add('username', 'text')
             ->add('password', 'text')
@@ -82,7 +82,7 @@ class SecuredController extends Controller
             $encoder = $factory->getEncoder($user);
             $password = $encoder->encodePassword($user->getPassword(), $user->getSalt());
             $user->setPassword($password);
-            
+           
             $em = $this->getDoctrine()->getManager();
             $em->persist($user);
             $em->flush();

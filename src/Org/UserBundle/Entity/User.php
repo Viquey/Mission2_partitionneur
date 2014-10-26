@@ -46,10 +46,10 @@ class User implements UserInterface, \Serializable{
     
     /**
      * @ORM\ManyToMany(targetEntity="Group", inversedBy="users")
-     *
+     * 
      */
     private $groups;
-
+    
     public function __construct()
     {
         $this->isActive = true;
