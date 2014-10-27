@@ -109,7 +109,7 @@ class Eleve
      * @param \Org\PartitionneurBundle\Entity\Classe $classe
      * @return Eleve
      */
-    public function setClasse(\Org\PartitionneurBundle\Entity\Classe $classe = null)
+    public function setClasse(\Org\PartitionneurBundle\Entity\Classe $classe )
     {
         $this->classe = $classe;
 

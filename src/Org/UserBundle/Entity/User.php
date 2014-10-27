@@ -35,7 +35,7 @@ class User implements UserInterface, \Serializable{
     private $salt;
 
     /**
-     * @ORM\Column(type="string", length=60, unique=true)
+     * @ORM\Column(type="string", length=60)
      */
     private $email;
 
@@ -50,11 +50,18 @@ class User implements UserInterface, \Serializable{
      */
     private $groups;
     
+    /**
+     * @ORM\ManyToMany(targetEntity="\Org\PartitionneurBundle\Entity\Classe", inversedBy="users")
+     * 
+     */
+    private $classes;
+    
     public function __construct()
     {
         $this->isActive = true;
         $this->salt = md5(uniqid(null, true));
         $this->groups = new ArrayCollection();
+        $this->classes = new ArrayCollection();
     }
 
     /**
@@ -161,6 +168,27 @@ class User implements UserInterface, \Serializable{
         $this->groups[] = $group;
 
         return $this;
+    }
+    
+    /**
+     * Set classes
+     *
+     * @param \Org\PartitionneurBundle\Entity\Classe $classe
+     * @return User
+     */
+    public function setClasses($classe)
+    {
+        $this->classes[] = $classe;
+
+        return $this;
+    }
+    
+    /**
+     * @inheritDoc
+     */
+    public function getClasses()
+    {
+        return $this->classes->toArray();
     }
 
     /**

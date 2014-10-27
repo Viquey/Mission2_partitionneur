@@ -21,7 +21,7 @@ class SecuredController extends Controller
 {
     
     /**
-     * @Route("/index",name="_index")
+     * @Route("/index",name="_index2")
      * @Route("/",name="_index")
      * @Template()
      */
@@ -198,6 +198,8 @@ class SecuredController extends Controller
      */
     public function uploadCsvAction(Request $request) {
         
+        $em = $this->getDoctrine()->getManager();
+        
         $form = $this->createFormBuilder()
         ->add('submitFile', 'file', array('label' => 'File to Submit'))
         ->getForm();
@@ -216,8 +218,6 @@ class SecuredController extends Controller
                 // Get file
                 $file = $form->get('submitFile');
 
-
-
                 // Your csv file here when you hit submit button
                 $donnee = $file->getData();
                 //print_r($donnee);
@@ -229,78 +229,92 @@ class SecuredController extends Controller
                     
                     $nbLigne = count($data);
                     for ($c=0; $c < $nbLigne; $c++) {
-                        //if ($c > 1) {
+                        //if ($c > 0) {
                             //separe chaque colonne du .csv
                             $featureData = explode(";",$data[$c]);
-                            
-                            $nbFeatureData = count($featureData);
 
                             //affectation de chaque colonne à une variable
                             $prenomF = $featureData[0];
                             $nomF = $featureData[1];
                             $classeF = $featureData[2];
-                            
-                            
-                            
+                                                                                  
                             //Savoir si c'est un eleve ou un prof
                             $explodeClasseF = explode(",", $classeF);
                             $nbExplodeClasseF = count($explodeClasseF);
                             if($nbExplodeClasseF != 1 ) {
-                                //c'est un prof
-                                $i = 0;
-                                //while($i < $nbExplodeClasseF){
-                                    //envo
-                                    //$i++;
-                                //}
-                            }
-                            else {
-                                //c'est un eleve
-                                $prenomEleve = $prenomF;
-                                $nomEleve = $nomF;
-                                $classeEleve = $classeF;
-
+                                $repository = $this->getDoctrine()
+                                    ->getRepository('OrgUserBundle:User');
+                                $username = strtolower (substr($prenomF,0,1).$nomF);
+                                $searchProf = $repository->findByUsername($username);
                                 
-
-                                $eleve = new Eleve();
-                                $eleve->setNom($nomEleve);
-                                $eleve->setPrenom($prenomEleve);
-
-                                $classe = new Classe();
-                                
-                                $tabClasse = array();
-                                if (in_array($classeF, $tabClasse)){
+                                if(count($searchProf)>0){
+                                    $prof = $repository->findOneByUsername($username);                 
+                                }           
+                                else{
+                                    $prof = new User();
+                                    $prof->setUsername($username);
+                                    $prof->setEmail("vide");
                                     
+                                    //cryptage pass
+                                    $factory = $this->get('security.encoder_factory');
+                                    $encoder = $factory->getEncoder($prof);
+                                    $password = $encoder->encodePassword("sio22", $prof->getSalt());
+                                    $prof->setPassword($password);
                                     
-                                    
+                                    //ajout ROLE_USER
+                                    $group = $this->getDoctrine()
+                                        ->getRepository('OrgUserBundle:Group')
+                                        ->find(1);
+                                    $prof->setGroups($group);                                   
                                 }
-                                else {
-                                    $tabClasse[] = $classeF;
-                                    print_r($tabClasse);
-                                    
-                                    $classe->setName($classeF);
-                                    
-                                    $em = $this->getDoctrine()->getManager();
-                                    $em->persist($classe);
+                                
+                                for($i=0;$i < $nbExplodeClasseF;$i++){
+                                    $strClasse = $explodeClasseF[$i];
+                                    $repositoryClasse = $this->getDoctrine()
+                                        ->getRepository('OrgPartitionneurBundle:Classe');
+                                    $searchClass = $repositoryClasse->findByName($strClasse);
+                                
+                                    if(count($searchClass)>0){
+                                        $classe = $repositoryClasse->findOneByName($strClasse);
+                                    }                                  
+                                    else{
+                                        $classe = new Classe();
+                                        $classe->setName($strClasse );
+                                        $em->persist($classe);
+                                        $em->flush();
+                                    }
+                                    $prof->setClasses($classe);
+                                }
+                                $em->persist($prof);
+                                $em->flush();  
+                            }
+                            else {    
+                                if($nomF != "Nom" & $prenomF != "Prenom"){
+                                    $eleve = new Eleve();
+                                    $eleve->setNom($nomF);
+                                    $eleve->setPrenom($prenomF);
+
+                                    $repository = $this->getDoctrine()
+                                        ->getRepository('OrgPartitionneurBundle:Classe');
+                                    $searchClass = $repository->findByName($classeF);
+
+                                    if(count($searchClass)>0){
+                                        $classe = $repository->findOneByName($classeF);
+                                    }
+                                    else{
+                                        $classe = new Classe();
+                                        $classe->setName($classeF);
+                                        $em->persist($classe);
+                                        $em->flush();                               
+                                    }
+                                    $eleve->setClasse($classe);
+                                    $em->persist($eleve);
                                     $em->flush();
                                 }
-                                
-                                    
-                                
-                                
-                                
-                                //Envoi des donnee a la bdd
-                                
-                                
-                                //$em->persist($eleve);
-                                //$em->flush();
-                                
                             }
-                            //return $this->redirect( $this->generateUrl('_administration', array('classeCreated'=>'true')));
-                        //}
-                        
-                        //echo('</p>');
                     }
                 }
+                return $this->redirect( $this->generateUrl('_administration', array('classeCreated'=>'true')));
                 fclose($handle);
             }
 
