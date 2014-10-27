@@ -10,7 +10,9 @@ use Symfony\Component\HttpFoundation\Response;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Org\UserBundle\Entity\User;
+use Org\PartitionneurBundle\Entity\Eleve;
 use Org\PartitionneurBundle\Entity\Classe;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * @Route("/secured")
@@ -188,5 +190,125 @@ class SecuredController extends Controller
 
         $partionneur = new JsonPartition($cardGrp, $personnes);
         return new Response($partionneur->getJson());
+    }
+    
+    /**
+     * @Route("/uploadCsv", name="_uploadCsv")
+     * @Template()
+     */
+    public function uploadCsvAction(Request $request) {
+        
+        $form = $this->createFormBuilder()
+        ->add('submitFile', 'file', array('label' => 'File to Submit'))
+        ->getForm();
+
+        // Check if we are posting stuff
+        if ($request->getMethod('post') == 'POST') {
+            // Bind request to the form
+            //$form->bindRequest($request);
+            
+            $form->handleRequest($request);
+
+            // If form is valid
+            if ($form->isValid()) {
+                
+                //echo "Le formulaire est valide <br/>Traitement du fichier Csv : <br/><br/>";
+                // Get file
+                $file = $form->get('submitFile');
+
+
+
+                // Your csv file here when you hit submit button
+                $donnee = $file->getData();
+                //print_r($donnee);
+                $csvFile = $donnee->getPathName();
+
+                $handle = fopen($csvFile,'r'); 
+
+                while (($data = fgetcsv($handle, 1000, "\n")) !== FALSE) {
+                    
+                    $nbLigne = count($data);
+                    for ($c=0; $c < $nbLigne; $c++) {
+                        //if ($c > 1) {
+                            //separe chaque colonne du .csv
+                            $featureData = explode(";",$data[$c]);
+                            
+                            $nbFeatureData = count($featureData);
+
+                            //affectation de chaque colonne à une variable
+                            $prenomF = $featureData[0];
+                            $nomF = $featureData[1];
+                            $classeF = $featureData[2];
+                            
+                            
+                            
+                            //Savoir si c'est un eleve ou un prof
+                            $explodeClasseF = explode(",", $classeF);
+                            $nbExplodeClasseF = count($explodeClasseF);
+                            if($nbExplodeClasseF != 1 ) {
+                                //c'est un prof
+                                $i = 0;
+                                //while($i < $nbExplodeClasseF){
+                                    //envo
+                                    //$i++;
+                                //}
+                            }
+                            else {
+                                //c'est un eleve
+                                $prenomEleve = $prenomF;
+                                $nomEleve = $nomF;
+                                $classeEleve = $classeF;
+
+                                
+
+                                $eleve = new Eleve();
+                                $eleve->setNom($nomEleve);
+                                $eleve->setPrenom($prenomEleve);
+
+                                $classe = new Classe();
+                                
+                                $tabClasse = array();
+                                if (in_array($classeF, $tabClasse)){
+                                    
+                                    
+                                    
+                                }
+                                else {
+                                    $tabClasse[] = $classeF;
+                                    print_r($tabClasse);
+                                    
+                                    $classe->setName($classeF);
+                                    
+                                    $em = $this->getDoctrine()->getManager();
+                                    $em->persist($classe);
+                                    $em->flush();
+                                }
+                                
+                                    
+                                
+                                
+                                
+                                //Envoi des donnee a la bdd
+                                
+                                
+                                //$em->persist($eleve);
+                                //$em->flush();
+                                
+                            }
+                            //return $this->redirect( $this->generateUrl('_administration', array('classeCreated'=>'true')));
+                        //}
+                        
+                        //echo('</p>');
+                    }
+                }
+                fclose($handle);
+            }
+
+        }
+
+        return $this->render('OrgPartitionneurBundle:Secured:uploadCsv.html.twig',
+            array('form' => $form->createView(),)
+        );
+        
     }
 }

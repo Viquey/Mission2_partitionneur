@@ -1,0 +1,15 @@
+{% extends "::layout.html.twig" %}
+
+{% block title parent() ~ "Upload Csv" %}
+    
+{% block content %}
+    Upload de votre fichier Csv<br/>
+    {#{ form(form) }#}
+    
+    <form action="{{ path('_uploadCsv')}}" method="post" {{ form_enctype(form) }}>
+        {{ form_widget(form) }}
+
+        <input type="submit" />
+    </form>
+{% endblock %}
+
