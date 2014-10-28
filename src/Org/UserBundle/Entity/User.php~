@@ -23,11 +23,30 @@ class User implements UserInterface, \Serializable{
      * @ORM\Column(type="string", length=25, unique=true)
      */
     private $username;
+    
+    /**
+     * @ORM\Column(type="string", length=25)
+     */
+    private $nom;
+    
+    /**
+    * @ORM\Column(type="string", length=25)
+    */
+    private $prenom;
 
     /**
      * @ORM\Column(type="string", length=40)
      */
     private $password;
+    
+    
+    private $oldPassword;
+    
+
+    private $newPassword;
+    
+    
+    private $confirmNewPassword;
     
     /**
      * @ORM\Column(type="string", length=32)
@@ -35,7 +54,7 @@ class User implements UserInterface, \Serializable{
     private $salt;
 
     /**
-     * @ORM\Column(type="string", length=60, unique=true)
+     * @ORM\Column(type="string", length=60)
      */
     private $email;
 
@@ -46,20 +65,22 @@ class User implements UserInterface, \Serializable{
     
     /**
      * @ORM\ManyToMany(targetEntity="Group", inversedBy="users")
-     *
+     * 
      */
     private $groups;
     
     /**
-   * @ORM\Column(name="roles", type="array")
-   */
-  private $roles = array();
-
+     * @ORM\ManyToMany(targetEntity="\Org\PartitionneurBundle\Entity\Classe", inversedBy="users")
+     * 
+     */
+    private $classes;
+    
     public function __construct()
     {
         $this->isActive = true;
         $this->salt = md5(uniqid(null, true));
         $this->groups = new ArrayCollection();
+        $this->classes = new ArrayCollection();
     }
 
     /**
@@ -154,6 +175,40 @@ class User implements UserInterface, \Serializable{
 
         return $this;
     }
+    
+    /**
+     * Set groups
+     *
+     * @param Group $group
+     * @return User
+     */
+    public function setGroups($group)
+    {
+        $this->groups[] = $group;
+
+        return $this;
+    }
+    
+    /**
+     * Set classes
+     *
+     * @param \Org\PartitionneurBundle\Entity\Classe $classe
+     * @return User
+     */
+    public function setClasses($classe)
+    {
+        $this->classes[] = $classe;
+
+        return $this;
+    }
+    
+    /**
+     * @inheritDoc
+     */
+    public function getClasses()
+    {
+        return $this->classes->toArray();
+    }
 
     /**
      * Set email
@@ -202,6 +257,75 @@ class User implements UserInterface, \Serializable{
     }
 
     /**
+     * Set oldPassword
+     *
+     * @param string $oldPassword
+     * @return User
+     */
+    public function setOldPassword($oldPassword)
+    {
+        $this->oldPassword = $oldPassword;
+
+        return $this;
+    }
+
+    /**
+     * Get oldPassword
+     *
+     * @return string 
+     */
+    public function getOldPassword()
+    {
+        return $this->oldPassword;
+    }
+
+    /**
+     * Set newPassword
+     *
+     * @param string $newPassword
+     * @return User
+     */
+    public function setNewPassword($newPassword)
+    {
+        $this->newPassword = $newPassword;
+
+        return $this;
+    }
+
+    /**
+     * Get newPassword
+     *
+     * @return string 
+     */
+    public function getNewPassword()
+    {
+        return $this->newPassword;
+    }
+
+    /**
+     * Set confirmNewPassword
+     *
+     * @param string $confirmNewPassword
+     * @return User
+     */
+    public function setConfirmNewPassword($confirmNewPassword)
+    {
+        $this->confirmNewPassword = $confirmNewPassword;
+
+        return $this;
+    }
+
+    /**
+     * Get confirmNewPassword
+     *
+     * @return string 
+     */
+    public function getConfirmNewPassword()
+    {
+        return $this->confirmNewPassword;
+    }
+
+    /**
      * Set salt
      *
      * @param string $salt
@@ -245,5 +369,28 @@ class User implements UserInterface, \Serializable{
     public function getGroups()
     {
         return $this->groups;
+    }
+
+    /**
+     * Add classes
+     *
+     * @param \Org\PartitionneurBundle\Entity\Classe $classes
+     * @return User
+     */
+    public function addClass(\Org\PartitionneurBundle\Entity\Classe $classes)
+    {
+        $this->classes[] = $classes;
+
+        return $this;
+    }
+
+    /**
+     * Remove classes
+     *
+     * @param \Org\PartitionneurBundle\Entity\Classe $classes
+     */
+    public function removeClass(\Org\PartitionneurBundle\Entity\Classe $classes)
+    {
+        $this->classes->removeElement($classes);
     }
 }

@@ -23,11 +23,30 @@ class User implements UserInterface, \Serializable{
      * @ORM\Column(type="string", length=25, unique=true)
      */
     private $username;
+    
+    /**
+     * @ORM\Column(type="string", length=25)
+     */
+    private $nom;
+    
+    /**
+    * @ORM\Column(type="string", length=25)
+    */
+    private $prenom;
 
     /**
      * @ORM\Column(type="string", length=40)
      */
     private $password;
+    
+    
+    private $oldPassword;
+    
+
+    private $newPassword;
+    
+    
+    private $confirmNewPassword;
     
     /**
      * @ORM\Column(type="string", length=32)
@@ -235,5 +254,189 @@ class User implements UserInterface, \Serializable{
     public function getIsActive()
     {
         return $this->isActive;
+    }
+
+    /**
+     * Set oldPassword
+     *
+     * @param string $oldPassword
+     * @return User
+     */
+    public function setOldPassword($oldPassword)
+    {
+        $this->oldPassword = $oldPassword;
+
+        return $this;
+    }
+
+    /**
+     * Get oldPassword
+     *
+     * @return string 
+     */
+    public function getOldPassword()
+    {
+        return $this->oldPassword;
+    }
+
+    /**
+     * Set newPassword
+     *
+     * @param string $newPassword
+     * @return User
+     */
+    public function setNewPassword($newPassword)
+    {
+        $this->newPassword = $newPassword;
+
+        return $this;
+    }
+
+    /**
+     * Get newPassword
+     *
+     * @return string 
+     */
+    public function getNewPassword()
+    {
+        return $this->newPassword;
+    }
+
+    /**
+     * Set confirmNewPassword
+     *
+     * @param string $confirmNewPassword
+     * @return User
+     */
+    public function setConfirmNewPassword($confirmNewPassword)
+    {
+        $this->confirmNewPassword = $confirmNewPassword;
+
+        return $this;
+    }
+
+    /**
+     * Get confirmNewPassword
+     *
+     * @return string 
+     */
+    public function getConfirmNewPassword()
+    {
+        return $this->confirmNewPassword;
+    }
+
+    /**
+     * Set salt
+     *
+     * @param string $salt
+     * @return User
+     */
+    public function setSalt($salt)
+    {
+        $this->salt = $salt;
+
+        return $this;
+    }
+
+    /**
+     * Add groups
+     *
+     * @param \Org\UserBundle\Entity\Group $groups
+     * @return User
+     */
+    public function addGroup(\Org\UserBundle\Entity\Group $groups)
+    {
+        $this->groups[] = $groups;
+
+        return $this;
+    }
+
+    /**
+     * Remove groups
+     *
+     * @param \Org\UserBundle\Entity\Group $groups
+     */
+    public function removeGroup(\Org\UserBundle\Entity\Group $groups)
+    {
+        $this->groups->removeElement($groups);
+    }
+
+    /**
+     * Get groups
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getGroups()
+    {
+        return $this->groups;
+    }
+
+    /**
+     * Add classes
+     *
+     * @param \Org\PartitionneurBundle\Entity\Classe $classes
+     * @return User
+     */
+    public function addClass(\Org\PartitionneurBundle\Entity\Classe $classes)
+    {
+        $this->classes[] = $classes;
+
+        return $this;
+    }
+
+    /**
+     * Remove classes
+     *
+     * @param \Org\PartitionneurBundle\Entity\Classe $classes
+     */
+    public function removeClass(\Org\PartitionneurBundle\Entity\Classe $classes)
+    {
+        $this->classes->removeElement($classes);
+    }
+
+    /**
+     * Set nom
+     *
+     * @param string $nom
+     * @return User
+     */
+    public function setNom($nom)
+    {
+        $this->nom = $nom;
+
+        return $this;
+    }
+
+    /**
+     * Get nom
+     *
+     * @return string 
+     */
+    public function getNom()
+    {
+        return $this->nom;
+    }
+
+    /**
+     * Set prenom
+     *
+     * @param string $prenom
+     * @return User
+     */
+    public function setPrenom($prenom)
+    {
+        $this->prenom = $prenom;
+
+        return $this;
+    }
+
+    /**
+     * Get prenom
+     *
+     * @return string 
+     */
+    public function getPrenom()
+    {
+        return $this->prenom;
     }
 }

@@ -53,78 +53,14 @@ class SecuredController extends Controller
     }
     
     /**
-     * @Route("/addUser",name="_addUser")
+     * @Route("/gestion",name="_gestion")
      * @Template()
      */
-    public function addUserAction(Request $request)
-    {   
-        $group = $this->getDoctrine()
-            ->getRepository('OrgUserBundle:Group')
-            ->find(1);
-        
-        $user = new User();
-        $user->setUsername('');
-        $user->setPassword('');
-        $user->setEmail('');
-        $user->setGroups($group);
-        
-        $form = $this->createFormBuilder($user)
-            ->add('username', 'text')
-            ->add('password', 'text')
-            ->add('email', 'text')
-            ->add('save', 'submit')
-            ->getForm();
-        
-        $form->handleRequest($request);
-
-        if ($form->isValid()) {
-            
-            //cryptage du pswd
-            $factory = $this->get('security.encoder_factory');
-            $encoder = $factory->getEncoder($user);
-            $password = $encoder->encodePassword($user->getPassword(), $user->getSalt());
-            $user->setPassword($password);
-           
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($user);
-            $em->flush();
-
-            return $this->redirect( $this->generateUrl('_administration', array('userCreated'=>'true')));
-        }
-
-        return $this->render('OrgPartitionneurBundle:Secured:addUser.html.twig', array(
-            'form' => $form->createView(),
-        ));       
-    }
-    
-    /**
-     * @Route("/addClasse",name="_addClasse")
-     * @Template()
-     */
-    public function addClasseAction(Request $request)
+    public function gestionAction()
     {
-        $classe = new Classe();
-        $classe->setName('');
-
-        $form = $this->createFormBuilder($classe)
-            ->add('name', 'text')
-            ->add('Ajouter', 'submit')
-            ->getForm();
         
-        $form->handleRequest($request);
-
-        if ($form->isValid()) {
-            
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($classe);
-            $em->flush();
-
-            return $this->redirect( $this->generateUrl('_administration', array('classeCreated'=>'true')));
-        }
-
-        return $this->render('OrgPartitionneurBundle:Secured:addUser.html.twig', array(
-            'form' => $form->createView(),
-        ));   
+        return array();
+        
     }
     
     /**
@@ -193,6 +129,67 @@ class SecuredController extends Controller
     }
     
     /**
+     * @Route("/updateEmail", name="_updateEmail")
+     * @Template()
+     */
+    public function updateEmailAction(Request $request){
+        
+        $user = $this->get('security.context')->getToken()->getUser();
+        
+        $form = $this->createFormBuilder($user)
+            ->add('email', 'text', array('label'  => 'Votre e-mail',))
+            ->add('Confirmer', 'submit')
+            ->getForm();
+        
+        $form->handleRequest($request);
+
+        if ($form->isValid()) {
+            
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($user);
+            $em->flush();
+
+            return $this->redirect( $this->generateUrl('_gestion', array('emailChanged'=>'true')));
+        }
+
+        return $this->render('OrgPartitionneurBundle:Secured:updateEmail.html.twig', array(
+            'form' => $form->createView(),
+        ));
+        
+    }
+    
+    /**
+     * @Route("/updateNom", name="_updateNom")
+     * @Template()
+     */
+    public function updateNomAction(Request $request){
+        
+        $user = $this->get('security.context')->getToken()->getUser();
+        
+        $form = $this->createFormBuilder($user)
+            ->add('nom', 'text', array('label'  => 'Votre nom',))
+            ->add('prenom', 'text', array('label'  => 'Votre prénom',))
+            ->add('Confirmer', 'submit')
+            ->getForm();
+        
+        $form->handleRequest($request);
+
+        if ($form->isValid()) {
+            
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($user);
+            $em->flush();
+
+            return $this->redirect( $this->generateUrl('_gestion', array('nomChanged'=>'true')));
+        }
+
+        return $this->render('OrgPartitionneurBundle:Secured:updateNom.html.twig', array(
+            'form' => $form->createView(),
+        ));
+        
+    }
+    
+    /**
      * @Route("/updateMdp", name="_updateMdp")
      * @Template()
      */
@@ -202,35 +199,110 @@ class SecuredController extends Controller
        
         
         $form = $this->createFormBuilder($user)
-            ->add('password', 'text')
+            ->add('oldPassword', 'password', array('label'  => 'Ancien mot de passe',))
+            ->add('newPassword', 'password', array('label'  => 'Nouveau mot de passe',))
+            ->add('confirmNewPassword', 'password', array('label'  => 'Confirmer le nouveau mot de passe',))
             ->add('Changer', 'submit')
             ->getForm();
         
         $form->handleRequest($request);
 
         if ($form->isValid()) {
-            
-            //cryptage du pswd
+            //cryptage du oldpswd
             $factory = $this->get('security.encoder_factory');
             $encoder = $factory->getEncoder($user);
-            $password = $encoder->encodePassword($user->getPassword(), $user->getSalt());
-            $user->setPassword($password);
-            
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($user);
-            $em->flush();
+            $oldpassword = $encoder->encodePassword($user->getOldPassword(), $user->getSalt());
+            $user->setOldPassword($oldpassword);
+            if($user->getOldPassword()==$user->getPassword()){
+                if($user->getNewPassword()==$user->getConfirmNewPassword()){
+                
+                    //cryptage du pswd
+                    $password = $encoder->encodePassword($user->getNewPassword(), $user->getSalt());
+                    $user->setPassword($password);
+                    $user->setOldPassword(null);
+                    $user->setNewPassword(null);
+                    $user->setConfirmNewPassword(null);
 
-            if($this->get('security.context')->isGranted('ROLE_ADMIN')) {
-                return $this->redirect( $this->generateUrl('_administration', array('mdpChanged'=>'true')));
+                    $em = $this->getDoctrine()->getManager();
+                    $em->persist($user);
+                    $em->flush();
+
+                    return $this->redirect( $this->generateUrl('_gestion', array('mdpChanged'=>'true')));
+                    
+                }
+                else{                 
+                    return $this->redirect( $this->generateUrl('_updateMdp', array('newNotOk'=>'true')));             
+                }
             }
-            elseif ($this->get('security.context')->isGranted('ROLE_USER')){
-                return $this->redirect( $this->generateUrl('_index', array('mdpChanged'=>'true')));
+            else{
+                return $this->redirect( $this->generateUrl('_updateMdp', array('oldNotOk'=>'true')));
             }
             
         }
         return $this->render('OrgPartitionneurBundle:Secured:updateMdp.html.twig', array(
             'form' => $form->createView(),
         ));    
+    }
+    
+    /**
+     * @Route("/selectProf", name="_selectProf")
+     * @Template()
+     */
+    public function selectProfAction(Request $request) {
+        
+        $repository = $this->getDoctrine()
+                           ->getRepository('OrgUserBundle:User');
+        $allProf = $repository->findAll();
+        
+        foreach($allProf as $entity){
+            $key=$entity->getId();
+            $arrayProf[$key]=$entity->getUsername();
+        }
+        
+        $form = $this->createFormBuilder()
+        ->add('selectProf', 'choice', array(
+                            'choices'   => $arrayProf,
+                        'multiple'  => false,
+                        'expanded'  => false,
+                        'label'     => 'Selectionner l\'utilisateur',
+                    ))
+        ->add('pswd', 'password',array('label' => 'Nouveau mot de passe'))
+        ->add('confirmPswd', 'password',array('label' => 'Confirmer le mot de passe'))
+        ->add('Changer', 'submit')
+        ->getForm();
+        
+        if ($request->getMethod('post') == 'POST') {
+            // Bind request to the form
+            //$form->bindRequest($request);
+            
+            $form->handleRequest($request);
+
+            if ($form->isValid()) {
+                
+                $pswd = $form->get('pswd')->getData();
+                $confirmPswd = $form->get('confirmPswd')->getData();
+                if($pswd==$confirmPswd){
+                    $idSelect = $form->get('selectProf')->getData();
+                    $username= $arrayProf[$idSelect];
+                    $user = $repository->findOneByUsername($username);
+                    $factory = $this->get('security.encoder_factory');
+                    $encoder = $factory->getEncoder($user);
+                    $password = $encoder->encodePassword($pswd, $user->getSalt());
+                    $user->setPassword($password);
+                    $em = $this->getDoctrine()->getManager();
+                    $em->persist($user);
+                    $em->flush();
+                    return $this->redirect( $this->generateUrl('_administration', array('mdpChanged'=>'true')));
+                }
+                else{
+                    return $this->redirect( $this->generateUrl('_selectProf', array('PswdNotOk'=>'true')));
+                }
+            }
+        }
+        
+        return $this->render('OrgPartitionneurBundle:Secured:selectProf.html.twig',
+            array('form' => $form->createView(),)
+        );
     }
     
     /**
@@ -242,7 +314,7 @@ class SecuredController extends Controller
         $em = $this->getDoctrine()->getManager();
         
         $form = $this->createFormBuilder()
-        ->add('submitFile', 'file', array('label' => 'File to Submit'))
+        ->add('submitFile', 'file', array('label' => 'Fichier à importer'))
         ->getForm();
 
         // Check if we are posting stuff
@@ -280,50 +352,50 @@ class SecuredController extends Controller
                         
                         if($nbExplodeClasseF != 1 ) {
                             $repository = $this->getDoctrine()
-                                ->getRepository('OrgUserBundle:User');
-                            $username = strtolower (substr($prenomF,0,1).$nomF);
+                            ->getRepository('OrgUserBundle:User');
+                            $username = strtolower(substr($prenomF,0,1).$nomF);
                             $searchProf = $repository->findByUsername($username);
-
                             if(count($searchProf)>0){
-                                $prof = $repository->findOneByUsername($username);                 
-                            }           
+                                $prof = $repository->findOneByUsername($username);
+                            }
                             else{
                                 $prof = new User();
                                 $prof->setUsername($username);
+                                $prof->setPrenom($prenomF);
+                                $prof->setNom($nomF);
                                 $prof->setEmail("vide");
-
                                 //cryptage pass
                                 $factory = $this->get('security.encoder_factory');
                                 $encoder = $factory->getEncoder($prof);
                                 $password = $encoder->encodePassword("sio22", $prof->getSalt());
                                 $prof->setPassword($password);
-
                                 //ajout ROLE_USER
                                 $group = $this->getDoctrine()
-                                    ->getRepository('OrgUserBundle:Group')
-                                    ->find(1);
-                                $prof->setGroups($group);                                   
+                                ->getRepository('OrgUserBundle:Group')
+                                ->find(1);
+                                $prof->setGroups($group);
                             }
-
                             for($i=0;$i < $nbExplodeClasseF;$i++){
-                                $strClasse = $explodeClasseF[$i];
+                                $strClasse = trim($explodeClasseF[$i]);
                                 $repositoryClasse = $this->getDoctrine()
                                     ->getRepository('OrgPartitionneurBundle:Classe');
                                 $searchClass = $repositoryClasse->findByName($strClasse);
-
                                 if(count($searchClass)>0){
                                     $classe = $repositoryClasse->findOneByName($strClasse);
-                                }                                  
+                                    if(!in_array($classe, $prof->getClasses())){
+                                       $prof->setClasses($classe); 
+                                    }
+                                }
                                 else{
                                     $classe = new Classe();
                                     $classe->setName($strClasse );
                                     $em->persist($classe);
                                     $em->flush();
-                                }
-                                $prof->setClasses($classe);
+                                    $prof->setClasses($classe);
+                                }                            
                             }
                             $em->persist($prof);
-                            $em->flush();  
+                            $em->flush();
                         }
                         else {    
                             if($nomF != "Nom" & $prenomF != "Prenom"){
@@ -340,7 +412,7 @@ class SecuredController extends Controller
                                 }
                                 else{
                                     $classe = new Classe();
-                                    $classe->setName($classeF);
+                                    $classe->setName(trim($classeF));
                                     $em->persist($classe);
                                     $em->flush();                               
                                 }

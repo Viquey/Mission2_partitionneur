@@ -5,4 +5,13 @@
 {% block content %}
     <center>Changement de mot de passe</center>
     {{ form(form) }}
+    {% block javascript %}
+        {% if app.request.get('newNotOk') == 'true'%}
+            <script type="text/javascript">alert('Les deux nouveaux mots de passe ne sont pas identiques.');</script>
+        {% endif %}
+        {% if app.request.get('oldNotOk') == 'true'%}
+            <script type="text/javascript">alert('L\'ancien mot de passe n\'est pas correct.');</script>
+        {% endif %}
+    {% endblock %}
 {% endblock %}
+

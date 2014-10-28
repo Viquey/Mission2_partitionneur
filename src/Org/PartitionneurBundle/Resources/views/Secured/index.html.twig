@@ -12,15 +12,6 @@
         <p>Vous trouverez vos action d'administrateur dans l'onglet Administration.</p>
         {% endif %}
     </div><br/>
-     
-     {% if app.user and is_granted('ROLE_USER') %}
-         <div>
-             <h3>Vos options : </h3>
-            <ul>
-                <li><a href='{{ path('_updateMdp')}}'>Changer votre mot de passe</a></li>
-            </ul>
-        </div>
-        {% endif %}
         
     {% block javascript %}
         {% if app.request.get('mdpChanged') == 'true'%}

@@ -12,8 +12,7 @@
 		<!--<link href="css/styles.css" rel="stylesheet">-->
                 {% block stylesheet %}
                     <link rel="stylesheet" href="{{ asset('bundles/bootstrap/css/bootstrap.min.css') }}" />
-                    <link rel="stylesheet" href="{{ asset('bundles/bootstrap/css/styles.css') }}" />
-                    
+                    <link rel="stylesheet" href="{{ asset('bundles/bootstrap/css/styles.css') }}" />               
                 {% endblock %}
                 
 	</head>
@@ -40,6 +39,13 @@
       </ul>
       <ul class="nav navbar-nav navbar-right">
         {% if app.user and is_granted('ROLE_USER') %}
+            <li><a href="{{ path('_gestion') }}">{{ app.security.getToken().getUser().getPrenom() }} {{ app.security.getToken().getUser().getNom() }}
+                {% if app.user and is_granted('ROLE_ADMIN') %}
+                    (admin)              
+                {% else %}
+                    (professeur)
+                {% endif %}
+                </a></li>
             <li><a href="{{ path('_partitionneur_logout') }}">Se deconnecter</a></li>
         {% else %}
             <li><a href="{{ path('_partitionneur_login') }}">Se connecter</a></li>

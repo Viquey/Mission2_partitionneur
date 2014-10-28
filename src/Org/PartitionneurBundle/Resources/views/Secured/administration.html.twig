@@ -5,9 +5,6 @@
 {% block content %}
     
     {% block javascript %}
-        {% if app.request.get('userCreated') == 'true'%}       
-            <script type="text/javascript">alert('Professeur créé.');</script>       
-        {% endif %}
         
         {% if app.request.get('classeCreated') == 'true'%}
             <script type="text/javascript">alert('Classe créée.');</script>
@@ -24,9 +21,7 @@
     
     <center>Page d'administration</center>
     <ul>
-        <li><a href='{{ path('_addUser')}}'>Ajouter un professeur</a></li>
-        <li><a href='{{ path('_addClasse')}}'>Ajouter une classe</a></li>
-        <li><a href='{{ path('_uploadCsv')}}'>Upload de fichier Csv</a></li>
-        <li><a href='{{ path('_updateMdp')}}'>Changer votre mot de passe</a></li> 
+        <li><a href='{{ path('_uploadCsv')}}'>Importation d'un fichier CSV</a></li>
+        <li><a href='{{ path('_selectProf')}}'>Changer le mot de passe d'un professeur</a></li> 
     </ul>
 {% endblock %}
