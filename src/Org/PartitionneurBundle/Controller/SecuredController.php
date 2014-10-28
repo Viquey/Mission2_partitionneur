@@ -193,6 +193,47 @@ class SecuredController extends Controller
     }
     
     /**
+     * @Route("/updateMdp", name="_updateMdp")
+     * @Template()
+     */
+    public function updateMdpAction(Request $request){
+        
+        $user = $this->get('security.context')->getToken()->getUser();
+       
+        
+        $form = $this->createFormBuilder($user)
+            ->add('password', 'text')
+            ->add('Changer', 'submit')
+            ->getForm();
+        
+        $form->handleRequest($request);
+
+        if ($form->isValid()) {
+            
+            //cryptage du pswd
+            $factory = $this->get('security.encoder_factory');
+            $encoder = $factory->getEncoder($user);
+            $password = $encoder->encodePassword($user->getPassword(), $user->getSalt());
+            $user->setPassword($password);
+            
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($user);
+            $em->flush();
+
+            if($this->get('security.context')->isGranted('ROLE_ADMIN')) {
+                return $this->redirect( $this->generateUrl('_administration', array('mdpChanged'=>'true')));
+            }
+            elseif ($this->get('security.context')->isGranted('ROLE_USER')){
+                return $this->redirect( $this->generateUrl('_index', array('mdpChanged'=>'true')));
+            }
+            
+        }
+        return $this->render('OrgPartitionneurBundle:Secured:updateMdp.html.twig', array(
+            'form' => $form->createView(),
+        ));    
+    }
+    
+    /**
      * @Route("/uploadCsv", name="_uploadCsv")
      * @Template()
      */
@@ -211,115 +252,110 @@ class SecuredController extends Controller
             
             $form->handleRequest($request);
 
-            // If form is valid
             if ($form->isValid()) {
                 
-                //echo "Le formulaire est valide <br/>Traitement du fichier Csv : <br/><br/>";
                 // Get file
                 $file = $form->get('submitFile');
 
-                // Your csv file here when you hit submit button
                 $donnee = $file->getData();
-                //print_r($donnee);
                 $csvFile = $donnee->getPathName();
-
-                $handle = fopen($csvFile,'r'); 
-
+                $handle = fopen($csvFile,'r');
+                
                 while (($data = fgetcsv($handle, 1000, "\n")) !== FALSE) {
                     
                     $nbLigne = count($data);
                     for ($c=0; $c < $nbLigne; $c++) {
-                        //if ($c > 0) {
-                            //separe chaque colonne du .csv
-                            $featureData = explode(";",$data[$c]);
 
-                            //affectation de chaque colonne à une variable
-                            $prenomF = $featureData[0];
-                            $nomF = $featureData[1];
-                            $classeF = $featureData[2];
-                                                                                  
-                            //Savoir si c'est un eleve ou un prof
-                            $explodeClasseF = explode(",", $classeF);
-                            $nbExplodeClasseF = count($explodeClasseF);
-                            if($nbExplodeClasseF != 1 ) {
-                                $repository = $this->getDoctrine()
-                                    ->getRepository('OrgUserBundle:User');
-                                $username = strtolower (substr($prenomF,0,1).$nomF);
-                                $searchProf = $repository->findByUsername($username);
-                                
-                                if(count($searchProf)>0){
-                                    $prof = $repository->findOneByUsername($username);                 
-                                }           
-                                else{
-                                    $prof = new User();
-                                    $prof->setUsername($username);
-                                    $prof->setEmail("vide");
-                                    
-                                    //cryptage pass
-                                    $factory = $this->get('security.encoder_factory');
-                                    $encoder = $factory->getEncoder($prof);
-                                    $password = $encoder->encodePassword("sio22", $prof->getSalt());
-                                    $prof->setPassword($password);
-                                    
-                                    //ajout ROLE_USER
-                                    $group = $this->getDoctrine()
-                                        ->getRepository('OrgUserBundle:Group')
-                                        ->find(1);
-                                    $prof->setGroups($group);                                   
-                                }
-                                
-                                for($i=0;$i < $nbExplodeClasseF;$i++){
-                                    $strClasse = $explodeClasseF[$i];
-                                    $repositoryClasse = $this->getDoctrine()
-                                        ->getRepository('OrgPartitionneurBundle:Classe');
-                                    $searchClass = $repositoryClasse->findByName($strClasse);
-                                
-                                    if(count($searchClass)>0){
-                                        $classe = $repositoryClasse->findOneByName($strClasse);
-                                    }                                  
-                                    else{
-                                        $classe = new Classe();
-                                        $classe->setName($strClasse );
-                                        $em->persist($classe);
-                                        $em->flush();
-                                    }
-                                    $prof->setClasses($classe);
-                                }
-                                $em->persist($prof);
-                                $em->flush();  
+                        //separe chaque colonne du .csv
+                        $featureData = explode(";",$data[$c]);
+
+                        //affectation de chaque colonne à une variable
+                        $prenomF = $featureData[0];
+                        $nomF = $featureData[1];
+                        $classeF = $featureData[2];
+
+                        //Savoir si c'est un eleve ou un prof
+                        $explodeClasseF = explode(",", $classeF);
+                        $nbExplodeClasseF = count($explodeClasseF);
+                        
+                        if($nbExplodeClasseF != 1 ) {
+                            $repository = $this->getDoctrine()
+                                ->getRepository('OrgUserBundle:User');
+                            $username = strtolower (substr($prenomF,0,1).$nomF);
+                            $searchProf = $repository->findByUsername($username);
+
+                            if(count($searchProf)>0){
+                                $prof = $repository->findOneByUsername($username);                 
+                            }           
+                            else{
+                                $prof = new User();
+                                $prof->setUsername($username);
+                                $prof->setEmail("vide");
+
+                                //cryptage pass
+                                $factory = $this->get('security.encoder_factory');
+                                $encoder = $factory->getEncoder($prof);
+                                $password = $encoder->encodePassword("sio22", $prof->getSalt());
+                                $prof->setPassword($password);
+
+                                //ajout ROLE_USER
+                                $group = $this->getDoctrine()
+                                    ->getRepository('OrgUserBundle:Group')
+                                    ->find(1);
+                                $prof->setGroups($group);                                   
                             }
-                            else {    
-                                if($nomF != "Nom" & $prenomF != "Prenom"){
-                                    $eleve = new Eleve();
-                                    $eleve->setNom($nomF);
-                                    $eleve->setPrenom($prenomF);
 
-                                    $repository = $this->getDoctrine()
-                                        ->getRepository('OrgPartitionneurBundle:Classe');
-                                    $searchClass = $repository->findByName($classeF);
+                            for($i=0;$i < $nbExplodeClasseF;$i++){
+                                $strClasse = $explodeClasseF[$i];
+                                $repositoryClasse = $this->getDoctrine()
+                                    ->getRepository('OrgPartitionneurBundle:Classe');
+                                $searchClass = $repositoryClasse->findByName($strClasse);
 
-                                    if(count($searchClass)>0){
-                                        $classe = $repository->findOneByName($classeF);
-                                    }
-                                    else{
-                                        $classe = new Classe();
-                                        $classe->setName($classeF);
-                                        $em->persist($classe);
-                                        $em->flush();                               
-                                    }
-                                    $eleve->setClasse($classe);
-                                    $em->persist($eleve);
+                                if(count($searchClass)>0){
+                                    $classe = $repositoryClasse->findOneByName($strClasse);
+                                }                                  
+                                else{
+                                    $classe = new Classe();
+                                    $classe->setName($strClasse );
+                                    $em->persist($classe);
                                     $em->flush();
                                 }
+                                $prof->setClasses($classe);
                             }
+                            $em->persist($prof);
+                            $em->flush();  
+                        }
+                        else {    
+                            if($nomF != "Nom" & $prenomF != "Prenom"){
+                                $eleve = new Eleve();
+                                $eleve->setNom($nomF);
+                                $eleve->setPrenom($prenomF);
+
+                                $repository = $this->getDoctrine()
+                                    ->getRepository('OrgPartitionneurBundle:Classe');
+                                $searchClass = $repository->findByName($classeF);
+
+                                if(count($searchClass)>0){
+                                    $classe = $repository->findOneByName($classeF);
+                                }
+                                else{
+                                    $classe = new Classe();
+                                    $classe->setName($classeF);
+                                    $em->persist($classe);
+                                    $em->flush();                               
+                                }
+                                $eleve->setClasse($classe);
+                                $em->persist($eleve);
+                                $em->flush();
+                            }
+                        }
                     }
                 }
-                return $this->redirect( $this->generateUrl('_administration', array('classeCreated'=>'true')));
+                return $this->redirect( $this->generateUrl('_administration', array('csvUploaded'=>'true')));
                 fclose($handle);
             }
-
         }
-
+        
         return $this->render('OrgPartitionneurBundle:Secured:uploadCsv.html.twig',
             array('form' => $form->createView(),)
         );
