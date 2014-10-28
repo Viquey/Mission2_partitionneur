@@ -17,11 +17,15 @@
         {% if app.request.get('csvUploaded') == 'true'%}
             <script type="text/javascript">alert('L\'envoi du fichier .csv est un succès !');</script>
         {% endif %}
+        {% if app.request.get('resetDone') == 'true'%}
+            <script type="text/javascript">alert('Le mot de passe a été rénitialisé avec succès !');</script>
+        {% endif %}
+        
     {% endblock %}
     
     <center>Page d'administration</center>
     <ul>
         <li><a href='{{ path('_uploadCsv')}}'>Importation d'un fichier CSV</a></li>
-        <li><a href='{{ path('_selectProf')}}'>Changer le mot de passe d'un professeur</a></li> 
+        <li><a href='{{ path('_resetMdpBySelectingProf')}}'>Réinitialiser le mot de passe d'un professeur</a></li> 
     </ul>
 {% endblock %}

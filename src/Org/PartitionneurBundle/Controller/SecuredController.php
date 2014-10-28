@@ -245,10 +245,10 @@ class SecuredController extends Controller
     }
     
     /**
-     * @Route("/selectProf", name="_selectProf")
+     * @Route("/selectProf", name="_resetMdpBySelectingProf")
      * @Template()
      */
-    public function selectProfAction(Request $request) {
+    public function resetMdpBySelectingProfAction(Request $request) {
         
         $repository = $this->getDoctrine()
                            ->getRepository('OrgUserBundle:User');
@@ -266,41 +266,31 @@ class SecuredController extends Controller
                         'expanded'  => false,
                         'label'     => 'Selectionner l\'utilisateur',
                     ))
-        ->add('pswd', 'password',array('label' => 'Nouveau mot de passe'))
-        ->add('confirmPswd', 'password',array('label' => 'Confirmer le mot de passe'))
-        ->add('Changer', 'submit')
+        ->add('Reinitialiser', 'submit')
         ->getForm();
         
         if ($request->getMethod('post') == 'POST') {
             // Bind request to the form
-            //$form->bindRequest($request);
             
             $form->handleRequest($request);
 
             if ($form->isValid()) {
-                
-                $pswd = $form->get('pswd')->getData();
-                $confirmPswd = $form->get('confirmPswd')->getData();
-                if($pswd==$confirmPswd){
-                    $idSelect = $form->get('selectProf')->getData();
-                    $username= $arrayProf[$idSelect];
-                    $user = $repository->findOneByUsername($username);
-                    $factory = $this->get('security.encoder_factory');
-                    $encoder = $factory->getEncoder($user);
-                    $password = $encoder->encodePassword($pswd, $user->getSalt());
-                    $user->setPassword($password);
-                    $em = $this->getDoctrine()->getManager();
-                    $em->persist($user);
-                    $em->flush();
-                    return $this->redirect( $this->generateUrl('_administration', array('mdpChanged'=>'true')));
-                }
-                else{
-                    return $this->redirect( $this->generateUrl('_selectProf', array('PswdNotOk'=>'true')));
-                }
+                $pswd = $form->get('Reinitialiser')->getData();
+                $idSelect = $form->get('selectProf')->getData();
+                $username= $arrayProf[$idSelect];
+                $user = $repository->findOneByUsername($username);
+                $factory = $this->get('security.encoder_factory');
+                $encoder = $factory->getEncoder($user);
+                $password = $encoder->encodePassword('sio22', $user->getSalt());
+                $user->setPassword($password);
+                $em = $this->getDoctrine()->getManager();
+                $em->persist($user);
+                $em->flush();
+                return $this->redirect( $this->generateUrl('_administration', array('resetDone'=>'true')));
             }
         }
         
-        return $this->render('OrgPartitionneurBundle:Secured:selectProf.html.twig',
+        return $this->render('OrgPartitionneurBundle:Secured:resetMdpBySelectingProf.html.twig',
             array('form' => $form->createView(),)
         );
     }
