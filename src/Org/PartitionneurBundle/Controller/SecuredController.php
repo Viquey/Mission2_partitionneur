@@ -12,7 +12,6 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Org\UserBundle\Entity\User;
 use Org\PartitionneurBundle\Entity\Eleve;
 use Org\PartitionneurBundle\Entity\Classe;
-use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * @Route("/secured")
@@ -36,56 +35,61 @@ class SecuredController extends Controller
      */
     public function partitionneurAction(Request $request)
     {
-        $classeRepository = $this->getDoctrine()
-                           ->getRepository('OrgPartitionneurBundle:Classe');
-        $allClasse = $classeRepository->findAll();
+        $securityContext = $this->container->get('security.context');
         
-        foreach($allClasse as $entity){
-            $key=$entity->getId();
-            $arrayClasse[$key]=$entity->getName();
-        }
-        
-        $form = $this->createFormBuilder()
-        ->add('selectClasse', 'choice', array(
-                            'choices'   => $arrayClasse,
-                        'multiple'  => false,
-                        'expanded'  => false,
-                        'label'     => 'Selectionner la classe',
-                    ))
-        ->add('Charger', 'submit')
-        ->getForm();
-        
-        if ($request->getMethod('post') == 'POST') {
-            // Bind request to the form
-            
-            $form->handleRequest($request);
-
-            if ($form->isValid()) { 
-                
-                $idClasse = $form->get('selectClasse')->getData();
-                
-                $elevesFormClassSelect = $this->getDoctrine()->getRepository('OrgPartitionneurBundle:Eleve')->findAll();
-                
-                foreach ($elevesFormClassSelect as $eleve){
-                    if ($eleve->getClasse()->getId() == $idClasse){
-                        $arrayEleveFromClasse[] = $eleve->getnom()." ".$eleve->getPrenom();
-                    }
-                    
+        if ($securityContext->isGranted('IS_AUTHENTICATED_FULLY')) {
+ 
+            $user = $this->get('security.context')->getToken()->getUser();
+            $allClasse = $user->getClasses();
+            if(count($allClasse)>0){
+                foreach($allClasse as $entity){
+                    $key=$entity->getId();
+                    $arrayClasse[$key]=$entity->getName();
                 }
-                //print_r($arrayEleveFromClasse);
-                
+
+                $form = $this->createFormBuilder()
+                    ->add('selectClasse', 'choice', array(
+                                        'choices'   => $arrayClasse,
+                                    'multiple'  => false,
+                                    'expanded'  => false,
+                                    'label'     => 'Selectionner la classe',
+                                ))
+                    ->add('Charger', 'submit')
+                    ->getForm();
+
+
+                if ($request->getMethod('post') == 'POST') {
+                    // Bind request to the form
+
+                    $form->handleRequest($request);
+
+                    if ($form->isValid()) { 
+
+                        $idClasse = $form->get('selectClasse')->getData();
+
+                        $classeRepository = $this->getDoctrine()->getRepository('OrgPartitionneurBundle:Classe');
+                        $classe = $classeRepository->find($idClasse);
+                        $arrayEleve = $classe->getEleves();
+
+                        return $this->render('OrgPartitionneurBundle:Secured:partitionneur.html.twig', array(
+                        'form' => $form->createView(),
+                        'eleves'=> $arrayEleve,
+                        'load'=>true,
+                        ));
+
+                    }
+                }
+
+                if($this->get('security.context')->isGranted('ROLE_USER') ) {
+
+                    return $this->render('OrgPartitionneurBundle:Secured:partitionneur.html.twig', array(
+                        'form' => $form->createView(),
+                        ));
+                }
             }
         }
+        return array();
         
-        if($this->get('security.context')->isGranted('ROLE_USER') ) {
-            
-            return $this->render('OrgPartitionneurBundle:Secured:partitionneur.html.twig', array(
-                'form' => $form->createView(),
-                ));
-        }
-        else {
-             return array();
-        }
     }
     
      /**

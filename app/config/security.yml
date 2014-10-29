@@ -35,5 +35,4 @@ security:
                 target: _index
 
     access_control:
-        - { path: ^/partitionneur/secured/application, roles: ROLE_USER }
         - { path: ^/partitionneur/secured/administration, roles: ROLE_ADMIN }

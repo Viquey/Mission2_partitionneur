@@ -29,7 +29,12 @@ class JsonPartition {
     $g = 0;
     for (; $g < $nbGrp - $delta; $g++) :
       for ($i = 0; $i < $this->card; $i++):
-        $tab[$g][] = ["nom" => \trim($this->personnes[$index++])];
+        if(trim($this->personnes[$index])!=""){
+            $tab[$g][] = ["nom" => \trim($this->personnes[$index++])];
+        }
+        else{
+           $index++; 
+        }
       endfor;
     endfor;
 
