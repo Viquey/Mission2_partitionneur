@@ -34,11 +34,58 @@ class SecuredController extends Controller
      * @Route("/application",name="_partitionneur")
      * @Template()
      */
-    public function partitionneurAction()
+    public function partitionneurAction(Request $request)
     {
+        $classeRepository = $this->getDoctrine()
+                           ->getRepository('OrgPartitionneurBundle:Classe');
+        $allClasse = $classeRepository->findAll();
         
-        return array();
+        foreach($allClasse as $entity){
+            $key=$entity->getId();
+            $arrayClasse[$key]=$entity->getName();
+        }
         
+        $form = $this->createFormBuilder()
+        ->add('selectClasse', 'choice', array(
+                            'choices'   => $arrayClasse,
+                        'multiple'  => false,
+                        'expanded'  => false,
+                        'label'     => 'Selectionner la classe',
+                    ))
+        ->add('Charger', 'submit')
+        ->getForm();
+        
+        if ($request->getMethod('post') == 'POST') {
+            // Bind request to the form
+            
+            $form->handleRequest($request);
+
+            if ($form->isValid()) { 
+                
+                $idClasse = $form->get('selectClasse')->getData();
+                
+                $elevesFormClassSelect = $this->getDoctrine()->getRepository('OrgPartitionneurBundle:Eleve')->findAll();
+                
+                foreach ($elevesFormClassSelect as $eleve){
+                    if ($eleve->getClasse()->getId() == $idClasse){
+                        $arrayEleveFromClasse[] = $eleve->getnom()." ".$eleve->getPrenom();
+                    }
+                    
+                }
+                //print_r($arrayEleveFromClasse);
+                
+            }
+        }
+        
+        if($this->get('security.context')->isGranted('ROLE_USER') ) {
+            
+            return $this->render('OrgPartitionneurBundle:Secured:partitionneur.html.twig', array(
+                'form' => $form->createView(),
+                ));
+        }
+        else {
+             return array();
+        }
     }
     
      /**
@@ -245,7 +292,7 @@ class SecuredController extends Controller
     }
     
     /**
-     * @Route("/selectProf", name="_resetMdpBySelectingProf")
+     * @Route("/resetMdpBySelectingProf", name="_resetMdpBySelectingProf")
      * @Template()
      */
     public function resetMdpBySelectingProfAction(Request $request) {
