@@ -20,7 +20,14 @@
     Nom d'utilisateur : {{ app.security.getToken().getUser().getUsername() }}<br/>
     Nom: {{ app.security.getToken().getUser().getNom() }}<br/>
     Prenom: {{ app.security.getToken().getUser().getPrenom() }}<br/>
-    E-mail: {{ app.security.getToken().getUser().getEmail() }}<br/><br/>
+    E-mail:
+        {% if  app.security.getToken().getUser().getEmail() == "vide"%}
+            <span style="color: red;">Veuillez renseigner votre mail !</span>
+        {% else%}
+            {{ app.security.getToken().getUser().getEmail()}}
+        {% endif %}
+        
+    {#{ app.security.getToken().getUser().getEmail() }#}<br/><br/>
     <ul>
         <li><a href='{{ path('_updateMdp')}}'>Changer votre mot de passe</a></li>
         <li><a href='{{ path('_updateEmail')}}'>Changer votre email</a></li>

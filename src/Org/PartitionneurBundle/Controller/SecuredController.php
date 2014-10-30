@@ -18,6 +18,68 @@ use Org\PartitionneurBundle\Entity\Classe;
  */
 class SecuredController extends Controller
 {
+    /**
+     * @Route("/ajoutProf", name="_addProf")
+     * @Template()
+     */
+    public function addProfAction(Request $request) {
+        
+        $prof = new User();
+        $prof->setNom('');
+        $prof->setPrenom('');
+        $prof->setUsername('');
+        $prof->setPassword('');
+        $prof->setEmail('vide');
+        
+        $form = $this->createFormBuilder($prof)
+                ->add('nom', 'text')
+                ->add('prenom','text')
+                ->add('Ajouter', 'submit')
+                ->getForm();
+        
+        $form->handleRequest($request);
+        
+        if ($form->isValid()){
+            
+            $factory = $this->get('security.encoder_factory');
+            $encoder = $factory->getEncoder($prof);
+            $password = $encoder->encodePassword("sio22", $prof->getSalt());
+            $prof->setPassword($password);
+            
+            //ajout ROLE_USER
+            $group = $this->getDoctrine()
+            ->getRepository('OrgUserBundle:Group')
+            ->find(1);
+            
+            $prof->setGroups($group);
+            
+            $prenom = $form->get('prenom')->getData();
+            $nom = $form->get('nom')->getData();
+            $repositoryProf = $this->getDoctrine()
+                            ->getRepository('OrgUserBundle:User');
+            
+            $username = strtolower(substr($prenom,0,1).$nom);  
+            $searchProf = $repositoryProf->findByUsername($username);
+            if(count($searchProf)>0){                                   //Améliorer l'algo de fixation d'username
+                $username = strtolower(substr($prenom,0,2).$nom);    //Permet seulement d'ajouter une lettre en plus
+            }
+            
+            
+            $prof->setUsername($username);
+            
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($prof);
+            $em->flush();
+            
+            return $this->redirect( $this->generateUrl('_administration', array('profAdd'=>'true')));
+            
+        }
+        
+        return $this->render('OrgPartitionneurBundle:Secured:addProf.html.twig', array(
+                        'form' => $form->createView(),
+                        ));
+        
+    }
     
     /**
      * @Route("/index",name="_index2")
