@@ -30,10 +30,26 @@ class SecuredController extends Controller
         $prof->setUsername('');
         $prof->setPassword('');
         $prof->setEmail('vide');
+        //$prof->setClasses('');
         
-        $form = $this->createFormBuilder($prof)
+        $classeRepository = $this->getDoctrine()->getRepository('OrgPartitionneurBundle:Classe');
+        $classes = $classeRepository->findAll();
+        foreach($classes as $entity){
+            $key=$entity->getId();
+            $arrayClasse[$key]=$entity->getName();
+
+        }
+            
+        
+        $form = $this->createFormBuilder()
                 ->add('nom', 'text')
                 ->add('prenom','text')
+                ->add('selectClasse', 'choice', array(
+                                        'choices'   => $arrayClasse,
+                                    'multiple'  => false,
+                                    'expanded'  => false,
+                                    'label'     => 'Selectionner la classe',
+                                ))
                 ->add('Ajouter', 'submit')
                 ->getForm();
         
@@ -45,6 +61,10 @@ class SecuredController extends Controller
             $encoder = $factory->getEncoder($prof);
             $password = $encoder->encodePassword("sio22", $prof->getSalt());
             $prof->setPassword($password);
+            
+            $idClasse = $form->get('selectClasse')->getData();
+            $classe = $classeRepository->find($idClasse);
+            $prof->setClasses($classe);
             
             //ajout ROLE_USER
             $group = $this->getDoctrine()
@@ -89,6 +109,59 @@ class SecuredController extends Controller
     public function indexAction()
     {
         return array();
+    }
+    
+    /**
+     * @Route("/setAdmin",name="_setAdmin")
+     * @Template()
+     */
+    public function setAdminAction(Request $request)
+    {
+        $userRepository = $this->getDoctrine()->getRepository('OrgUserBundle:User');
+        $user = $userRepository->findAll();
+        
+        $groupUser = $this->getDoctrine()
+            ->getRepository('OrgUserBundle:Group')
+            ->find(1);
+        
+        //if ($user->getGroups() == $groupUser) {
+            foreach($user as $entity) {
+                $key = $entity->getId();
+                $arrayUser[$key] = $entity->getNom()." ".$entity->getPrenom(); 
+            }
+        //}
+        //print_r($arrayUser);
+        
+        $form = $this->createFormBuilder()         
+                ->add('selectUser', 'choice', array(
+                                        'choices'   => $arrayUser,
+                                    'multiple'  => false,
+                                    'expanded'  => false,
+                                    'label'     => 'Selectionner l\'utilisateur',
+                                ))
+                ->add('Promouvoir', 'submit')
+                ->getForm();
+        
+        $form->handleRequest($request);
+        
+        if($form->isValid()) {
+            $thisUser = $this->getUser();
+            
+            $groupAdmin = $this->getDoctrine()
+            ->getRepository('OrgUserBundle:Group')
+            ->find(2);
+            
+            /*$thisUser->setGroups($groupAdmin);
+            
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($thisUser);
+            $em->flush();*/
+        }
+        
+       
+        return $this->render('OrgPartitionneurBundle:Secured:setAdmin.html.twig', array(
+                        'form' => $form->createView(),
+                        ));
     }
     
      /**

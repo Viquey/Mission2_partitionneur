@@ -1,0 +1,9 @@
+{% extends "::layout.html.twig" %}
+
+{% block title parent() ~ "Promouvoir un utilisateur" %}
+    
+{% block content %}
+    Modifier le mot de passe d'un utilisateur<br/>
+    {{ form(form) }}
+
+{% endblock %}
