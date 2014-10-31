@@ -29,12 +29,7 @@ class JsonPartition {
     $g = 0;
     for (; $g < $nbGrp - $delta; $g++) :
       for ($i = 0; $i < $this->card; $i++):
-        if(trim($this->personnes[$index])!=""){
-            $tab[$g][] = ["nom" => \trim($this->personnes[$index++])];
-        }
-        else{
-           $index++; 
-        }
+        $tab[$g][] = ["nom" => \trim($this->personnes[$index++])];
       endfor;
     endfor;
 
@@ -56,6 +51,50 @@ class JsonPartition {
     // clé du tableu = attribut d'un objet json
     $res = ["date" => date("Y-m-d H:i"), "classe" => "BTS SIO SLAM", "groupes" => $tab];
     return \json_encode($res);
+  }
+  
+  public function getSecondJson() {
+            $nombreEleve = count($this->personnes);
+                
+            //definition des variables
+            $nbrDeGroup = ceil($nombreEleve / $this->card) ;
+            $reste = $nombreEleve%($nbrDeGroup - 1 );
+            $indiceMax = $nbrDeGroup-1;
+                
+            //remplissage du tableau
+            for($i=0;$i<$indiceMax;$i++){
+                $tab[$i]=($nombreEleve-$reste)/($nbrDeGroup-1);
+             }
+            $tab[$indiceMax]=$reste;
+             
+            //reequilibrage
+            for($j=$indiceMax-1;$tab[0]-$tab[$indiceMax]>1;$j--){
+                if($j<0){
+                     $j=$indiceMax-1;
+                }
+                $tab[$j]--;
+                $tab[$indiceMax]++;
+            }
+                
+            /*PHASE 3 : REPARTITION ALEATOIRE DES ELEVES DANS LES GROUPES
+              initalisation tableau eleve present*/
+            for($g=0;$g<count($this->personnes);$g++){
+                $present[$g]=false;
+            }
+            $groupes = [];
+            $index=0;
+            //Boucle des differents groupes
+            for($k=0;$k<count($tab);$k++){
+                //Boucles des différentes personnes dans chacun des groupes
+                for($m=0;$m<$tab[$k];$m++){
+                    
+                        $groupes[$k][$m] = ["nom" => \trim($this->personnes[$index++])];
+                    
+                }
+            }
+            
+            $res = ["date" => date("Y-m-d H:i"), "classe" => "BTS SIO SLAM", "groupes" => $groupes];
+            return \json_encode($res);
   }
 }
 

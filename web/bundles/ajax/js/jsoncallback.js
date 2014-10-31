@@ -15,7 +15,7 @@ function jsoncallback(objetJS) {
     var title = document.createElement("h3");
     title.setAttribute("class", "panel-title");
     // nomme le groupe à partir de "A" dont le code ascii est 65
-    title.innerHTML="<span class='badge pull-right'>"+ String.fromCharCode(65+i) +"</span> groupe";
+    title.innerHTML=" Groupe <span class='badge '>"+ (i+1) +"</span>";
     var div3 = document.createElement("div");
     div3.setAttribute("class", "panel-body");
     

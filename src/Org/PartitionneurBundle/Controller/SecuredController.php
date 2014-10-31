@@ -19,7 +19,7 @@ use Org\PartitionneurBundle\Entity\Classe;
 class SecuredController extends Controller
 {
     /**
-     * @Route("/ajoutProf", name="_addProf")
+     * @Route("/administration/ajoutProf", name="_addProf")
      * @Template()
      */
     public function addProfAction(Request $request) {
@@ -108,7 +108,7 @@ class SecuredController extends Controller
     }
     
     /**
-     * @Route("/removeUser",name="_removeUser")
+     * @Route("/administration/removeUser",name="_removeUser")
      * @Template()
      */
     public function removeUserAction(Request $request)
@@ -153,7 +153,7 @@ class SecuredController extends Controller
     }
     
     /**
-     * @Route("/removeClasse",name="_removeClasse")
+     * @Route("/administration/removeClasse",name="_removeClasse")
      * @Template()
      */
     public function removeClasseAction(Request $request)
@@ -222,7 +222,7 @@ class SecuredController extends Controller
     }
     
     /**
-     * @Route("/setAdmin",name="_setAdmin")
+     * @Route("/administration/setAdmin",name="_setAdmin")
      * @Template()
      */
     public function setAdminAction(Request $request)
@@ -285,7 +285,7 @@ class SecuredController extends Controller
     }
     
     /**
-     * @Route("/setUser",name="_setUser")
+     * @Route("/administration/setUser",name="_setUser")
      * @Template()
      */
     public function setUserAction(Request $request)
@@ -392,7 +392,6 @@ class SecuredController extends Controller
                         return $this->render('OrgPartitionneurBundle:Secured:partitionneur.html.twig', array(
                         'form' => $form->createView(),
                         'eleves'=> $arrayEleve,
-                        'load'=>true,
                         ));
 
                     }
@@ -476,6 +475,7 @@ class SecuredController extends Controller
         
         $cardGrp = $request->request->get('cardGrp');
         $csv = $request->request->get('personnes');
+        $choice = $request->request->get('choice');
         
               
         if (empty($cardGrp) || empty($csv) ):
@@ -485,16 +485,27 @@ class SecuredController extends Controller
 
      
         $personnes = explode("\n", $csv);
+        foreach($personnes as $key=>$value){
+            if($value==''){
+                array_splice($personnes, $key);
+            }
+        }
 
-        if (!is_numeric($cardGrp) || !$personnes || $cardGrp <= 0):
-            echo("something is wrong : cardianl is not numeric or personnes is not defined or cardinal is <= 0");
+        if (!is_numeric($cardGrp) || !$personnes || $cardGrp <= 1):
+            echo("something is wrong : cardinal is not numeric or personnes is not defined or cardinal is <= 1");
             return new Response('{}');           
         endif;
         
         
 
         $partionneur = new JsonPartition($cardGrp, $personnes);
-        return new Response($partionneur->getJson());
+        if($choice=="maxi"){
+            $partionnement=$partionneur->getJson();
+        }
+        else{
+            $partionnement=$partionneur->getSecondJson();
+        }
+        return new Response($partionnement);
     }
     
     /**
@@ -624,7 +635,7 @@ class SecuredController extends Controller
     }
     
     /**
-     * @Route("/resetMdpBySelectingProf", name="_resetMdpBySelectingProf")
+     * @Route("/administration/resetMdpBySelectingProf", name="_resetMdpBySelectingProf")
      * @Template()
      */
     public function resetMdpBySelectingProfAction(Request $request) {
@@ -678,7 +689,7 @@ class SecuredController extends Controller
     }
     
     /**
-     * @Route("/uploadCsv", name="_uploadCsv")
+     * @Route("/administration/uploadCsv", name="_uploadCsv")
      * @Template()
      */
     public function uploadCsvAction(Request $request) {

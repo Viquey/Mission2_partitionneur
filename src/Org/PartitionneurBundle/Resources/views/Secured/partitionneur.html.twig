@@ -33,7 +33,7 @@
             </div>
 
             <div class="form-group">
-                <button type="button" class="btn" onClick="uploadForm();">Soumettre</button>        
+                <button type="button" class="btn" onClick="uploadForm('maxi');">Soumettre</button>        
             </div>
             
         </div>
@@ -46,8 +46,11 @@
    <div class="panel-heading">Données pour la génération des groupes</div>
    <div class="panel-body">
     <div class="row">
-     <h3>[Choix d'une partition]</h3>
-     <div id="choixGroupe"></div>
+     <!--<h3>Choix d'une partition</h3>-->
+        <div id="choixGroupe">
+            <input type="radio" name='choice' onChange="uploadForm('maxi');" value="maxi" checked="true">Un maximum de groupe au cardinal max<br/>
+            <input type="radio" name='choice' onChange="uploadForm('equilibre');" value="equilibre">Un maximum de groupe équilibrés
+        </div>
     </div>
    </div>
   </div>
