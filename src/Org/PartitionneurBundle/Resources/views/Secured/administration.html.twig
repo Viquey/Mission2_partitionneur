@@ -10,24 +10,39 @@
         <li><a href='{{ path('_uploadCsv')}}'>Importation d'un fichier CSV</a></li>
         <li><a href='{{ path('_resetMdpBySelectingProf')}}'>Réinitialiser le mot de passe d'un professeur</a></li>
         <li><a href='{{ path('_addProf')}}'>Ajouter un professeur</a></li>
-        <li><a href='{{ path('_setAdmin')}}'>Rendre un utilisateur administrateur</a></li>
+        <li><a href='{{ path('_removeUser')}}'>Supprimer un professeur</a></li>
+        <li><a href='{{ path('_removeClasse')}}'>Supprimer une classe</a></li>
+        <li><a href='{{ path('_setAdmin')}}'>Promouvoir un utilisateur</a></li>
+        <li><a href='{{ path('_setUser')}}'>Retrograder un administrateur </a></li>
     </ul>
     
     <b><br/> 
         {% for flashMessage in app.session.flashbag.get('resetDone') %}
                 {{ flashMessage }}
-            {% endfor %}
+        {% endfor %}
         {% for flashMessage in app.session.flashbag.get('classeCreated') %}
                 {{ flashMessage }}
-            {% endfor %}
+        {% endfor %}
         {% for flashMessage in app.session.flashbag.get('mdpChanged') %}
                 {{ flashMessage }}
-            {% endfor %}
+        {% endfor %}
         {% for flashMessage in app.session.flashbag.get('csvUploaded') %}
                 {{ flashMessage }}
-            {% endfor %}
+        {% endfor %}
         {% for flashMessage in app.session.flashbag.get('profAdded') %}
                 {{ flashMessage }}
-            {% endfor %}    
+        {% endfor %}
+        {% for flashMessage in app.session.flashbag.get('adminSetted') %}
+                {{ flashMessage }}
+        {% endfor %} 
+        {% for flashMessage in app.session.flashbag.get('adminUnsetted') %}
+                {{ flashMessage }}
+        {% endfor %}
+        {% for flashMessage in app.session.flashbag.get('userRemoved') %}
+                {{ flashMessage }}
+        {% endfor %}
+        {% for flashMessage in app.session.flashbag.get('classeRemoved') %}
+                {{ flashMessage }}
+        {% endfor %}
     </b>
 {% endblock %}

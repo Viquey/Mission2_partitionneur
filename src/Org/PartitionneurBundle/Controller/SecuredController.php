@@ -46,8 +46,8 @@ class SecuredController extends Controller
                 ->add('prenom','text')
                 ->add('selectClasse', 'choice', array(
                                         'choices'   => $arrayClasse,
-                                    'multiple'  => false,
-                                    'expanded'  => false,
+                                    'multiple'  => true,
+                                    'expanded'  => true,
                                     'label'     => 'Selectionner la classe',
                                 ))
                 ->add('Ajouter', 'submit')
@@ -62,9 +62,11 @@ class SecuredController extends Controller
             $password = $encoder->encodePassword("sio22", $prof->getSalt());
             $prof->setPassword($password);
             
-            $idClasse = $form->get('selectClasse')->getData();
-            $classe = $classeRepository->find($idClasse);
-            $prof->setClasses($classe);
+            $classes = $form->get('selectClasse')->getData();
+            foreach($classes as $selected){
+                $classe = $classeRepository->find($selected);
+                $prof->setClasses($classe);
+            }
             
             //ajout ROLE_USER
             $group = $this->getDoctrine()
@@ -86,6 +88,8 @@ class SecuredController extends Controller
             
             
             $prof->setUsername($username);
+            $prof->setNom($nom);
+            $prof->setPrenom($prenom);
             
             $em = $this->getDoctrine()->getManager();
             $em->persist($prof);
@@ -101,6 +105,100 @@ class SecuredController extends Controller
                         'form' => $form->createView(),
                         ));
         
+    }
+    
+    /**
+     * @Route("/removeUser",name="_removeUser")
+     * @Template()
+     */
+    public function removeUserAction(Request $request)
+    {
+        $userRepository = $this->getDoctrine()->getRepository('OrgUserBundle:User');
+        $users = $userRepository->findAll();
+        foreach($users as $entity) {
+            $key = $entity->getId();
+            $arrayUser[$key] = $entity->getNom()." ".$entity->getPrenom(); 
+        }
+        
+        
+        $form = $this->createFormBuilder()         
+                ->add('selectUser', 'choice', array(
+                                        'choices'   => $arrayUser,
+                                    'multiple'  => false,
+                                    'expanded'  => false,
+                                    'label'     => 'Selectionner l\'utilisateur',
+                                ))
+                ->add('Supprimer', 'submit')
+                ->getForm();
+        
+        $form->handleRequest($request);
+        
+        if($form->isValid()) {
+            
+            $id = $form->get('selectUser')->getData();
+            $user = $userRepository->find($id);
+           
+            $em = $this->getDoctrine()->getManager();
+            $em->remove($user);
+            $em->flush();
+            
+            $this->get('session')->getFlashBag()->add('userRemoved', "L'utilisateur a été supprimé!");
+            return $this->redirect( $this->generateUrl('_administration'));
+        }
+        
+       
+        return $this->render('OrgPartitionneurBundle:Secured:removeUser.html.twig', array(
+                        'form' => $form->createView(),
+                        ));
+    }
+    
+    /**
+     * @Route("/removeClasse",name="_removeClasse")
+     * @Template()
+     */
+    public function removeClasseAction(Request $request)
+    {
+        $classeRepository = $this->getDoctrine()->getRepository('OrgPartitionneurBundle:Classe');
+        $classes = $classeRepository->findAll();
+        foreach($classes as $entity) {
+            $key = $entity->getId();
+            $arrayClasses[$key] = $entity->getName(); 
+        }
+        
+        
+        $form = $this->createFormBuilder()         
+                ->add('selectClasse', 'choice', array(
+                                        'choices'   => $arrayClasses,
+                                    'multiple'  => false,
+                                    'expanded'  => false,
+                                    'label'     => 'Selectionner la classe',
+                                ))
+                ->add('Supprimer', 'submit')
+                ->getForm();
+        
+        $form->handleRequest($request);
+        
+        if($form->isValid()) {
+            
+            $id = $form->get('selectClasse')->getData();
+            $classe = $classeRepository->find($id);
+            $eleves = $classe->getEleves();
+            $em = $this->getDoctrine()->getManager();
+            foreach($eleves as $entity){
+                $em->remove($entity);
+                $em->flush();
+            }
+            $em->remove($classe);
+            $em->flush();
+            
+            $this->get('session')->getFlashBag()->add('classeRemoved', "La classe et les élèves ont été supprimés!");
+            return $this->redirect( $this->generateUrl('_administration'));
+        }
+        
+       
+        return $this->render('OrgPartitionneurBundle:Secured:removeClasse.html.twig', array(
+                        'form' => $form->createView(),
+                        ));
     }
     
     /**
@@ -130,19 +228,23 @@ class SecuredController extends Controller
     public function setAdminAction(Request $request)
     {
         $userRepository = $this->getDoctrine()->getRepository('OrgUserBundle:User');
-        $user = $userRepository->findAll();
-        
-        $groupUser = $this->getDoctrine()
-            ->getRepository('OrgUserBundle:Group')
-            ->find(1);
-        
-        //if ($user->getGroups() == $groupUser) {
-            foreach($user as $entity) {
+        $users = $userRepository->findAll();
+        $groupAdmin = $this->getDoctrine()
+                       ->getRepository('OrgUserBundle:Group')
+                       ->find(2);
+        foreach($users as $entity) {
+            $groupsEntity=$entity->getGroups();
+            $validation=false;
+            foreach($groupsEntity as $group){
+               if($group==$groupAdmin)
+                   $validation=true;
+            }
+            if(!$validation){
                 $key = $entity->getId();
                 $arrayUser[$key] = $entity->getNom()." ".$entity->getPrenom(); 
             }
-        //}
-        //print_r($arrayUser);
+        }
+        
         
         $form = $this->createFormBuilder()         
                 ->add('selectUser', 'choice', array(
@@ -157,23 +259,90 @@ class SecuredController extends Controller
         $form->handleRequest($request);
         
         if($form->isValid()) {
-            $thisUser = $this->getUser();
             
-            $groupAdmin = $this->getDoctrine()
-            ->getRepository('OrgUserBundle:Group')
-            ->find(2);
+            $id = $form->get('selectUser')->getData();
+            $user = $userRepository->find($id);
+           
+            $groupUser = $this->getDoctrine()
+                       ->getRepository('OrgUserBundle:Group')
+                       ->find(1);
             
-            /*$thisUser->setGroups($groupAdmin);
+            $user->removeGroup($groupUser);
+            $user->setGroups($groupAdmin);
             
             $em = $this->getDoctrine()->getManager();
-            $em->persist($thisUser);
-            $em->flush();*/
+            $em->persist($user);
+            $em->flush();
             
-            $this->get('session')->getFlashBag()->add('adminSetted', "Le professeur a été ajouté !");
+            $this->get('session')->getFlashBag()->add('adminSetted', "Le professeur a été promu !");
+            return $this->redirect( $this->generateUrl('_administration'));
         }
         
        
         return $this->render('OrgPartitionneurBundle:Secured:setAdmin.html.twig', array(
+                        'form' => $form->createView(),
+                        ));
+    }
+    
+    /**
+     * @Route("/setUser",name="_setUser")
+     * @Template()
+     */
+    public function setUserAction(Request $request)
+    {
+        $userRepository = $this->getDoctrine()->getRepository('OrgUserBundle:User');
+        $users = $userRepository->findAll();
+        $groupUser = $this->getDoctrine()
+                       ->getRepository('OrgUserBundle:Group')
+                       ->find(1);
+        foreach($users as $entity) {
+            $groupsEntity=$entity->getGroups();
+            $validation=false;
+            foreach($groupsEntity as $group){
+               if($group==$groupUser)
+                   $validation=true;
+            }
+            if(!$validation){
+                $key = $entity->getId();
+                $arrayUser[$key] = $entity->getNom()." ".$entity->getPrenom(); 
+            }
+        }
+        
+        
+        $form = $this->createFormBuilder()         
+                ->add('selectUser', 'choice', array(
+                                        'choices'   => $arrayUser,
+                                    'multiple'  => false,
+                                    'expanded'  => false,
+                                    'label'     => 'Selectionner l\'utilisateur',
+                                ))
+                ->add('Retrograder', 'submit')
+                ->getForm();
+        
+        $form->handleRequest($request);
+        
+        if($form->isValid()) {
+            
+            $id = $form->get('selectUser')->getData();
+            $user = $userRepository->find($id);
+           
+            $groupAdmin = $this->getDoctrine()
+                       ->getRepository('OrgUserBundle:Group')
+                       ->find(2);
+            
+            $user->removeGroup($groupAdmin);
+            $user->setGroups($groupUser);
+            
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($user);
+            $em->flush();
+            
+            $this->get('session')->getFlashBag()->add('adminUnsetted', "Le professeur a été rétrogradé !");
+            return $this->redirect( $this->generateUrl('_administration'));
+        }
+        
+       
+        return $this->render('OrgPartitionneurBundle:Secured:setUser.html.twig', array(
                         'form' => $form->createView(),
                         ));
     }
