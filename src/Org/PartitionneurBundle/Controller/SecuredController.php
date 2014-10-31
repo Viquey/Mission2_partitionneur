@@ -205,11 +205,13 @@ class SecuredController extends Controller
      * @Route("/tableau-utilisateur",name="_listUser")
      * @Template()
      */
-    /*public function listUserAction()
+    public function listUserAction()
     {
+        $userRepository = $this->getDoctrine()->getRepository('OrgUserBundle:User');
+        $users = $userRepository->findAll();
         
-        return array();
-    }*/
+        return array('users'=> $users);
+    }
     
     /**
      * @Route("/index",name="_index2")
@@ -388,10 +390,13 @@ class SecuredController extends Controller
                         $classeRepository = $this->getDoctrine()->getRepository('OrgPartitionneurBundle:Classe');
                         $classe = $classeRepository->find($idClasse);
                         $arrayEleve = $classe->getEleves();
-
+                        foreach($arrayEleve as $entity){
+                            $arrayStrEleves[]=$entity->getNom()." ".$entity->getPrenom();
+                        }
+                        natcasesort($arrayStrEleves);
                         return $this->render('OrgPartitionneurBundle:Secured:partitionneur.html.twig', array(
                         'form' => $form->createView(),
-                        'eleves'=> $arrayEleve,
+                        'eleves'=> $arrayStrEleves,
                         ));
 
                     }
