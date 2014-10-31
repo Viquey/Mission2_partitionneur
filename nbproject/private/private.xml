@@ -2,15 +2,6 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group>
-            <file>file:/C:/www/viquey/Mission2_partitionneur/Mission2_partitionneur/src/Org/PartitionneurBundle/Resources/views/Secured/resetMdpBySelectingProf.html.twig</file>
-            <file>file:/C:/www/viquey/Mission2_partitionneur/Mission2_partitionneur/src/Org/PartitionneurBundle/Resources/views/Secured/partitionneur.html.twig</file>
-            <file>file:/C:/www/viquey/Mission2_partitionneur/Mission2_partitionneur/src/Org/UserBundle/Entity/Group.php</file>
-            <file>file:/C:/www/viquey/Mission2_partitionneur/Mission2_partitionneur/src/Org/PartitionneurBundle/Resources/views/Secured/administration.html.twig</file>
-            <file>file:/C:/www/viquey/Mission2_partitionneur/Mission2_partitionneur/src/Org/PartitionneurBundle/Entity/Classe.php</file>
-            <file>file:/C:/www/viquey/Mission2_partitionneur/Mission2_partitionneur/src/Org/PartitionneurBundle/Entity/Eleve.php</file>
-            <file>file:/C:/www/viquey/Mission2_partitionneur/Mission2_partitionneur/src/Org/UserBundle/Entity/User.php</file>
-            <file>file:/C:/www/viquey/Mission2_partitionneur/Mission2_partitionneur/src/Org/PartitionneurBundle/Controller/SecuredController.php</file>
-        </group>
+        <group/>
     </open-files>
 </project-private>
