@@ -4,33 +4,30 @@
     
 {% block content %}
     
-    {% block javascript %}
-        
-        {% if app.request.get('classeCreated') == 'true'%}
-            <script type="text/javascript">alert('Classe créée.');</script>
-        {% endif %}
-        
-        {% if app.request.get('mdpChanged') == 'true'%}
-            <script type="text/javascript">alert('Mot de passe changé !');</script>
-        {% endif %}
-        
-        {% if app.request.get('csvUploaded') == 'true'%}
-            <script type="text/javascript">alert('L\'envoi du fichier .csv est un succès !');</script>
-        {% endif %}
-        {% if app.request.get('resetDone') == 'true'%}
-            <script type="text/javascript">alert('Le mot de passe a été rénitialisé avec succès !');</script>
-        {% endif %}
-        {% if app.request.get('profAdd') == 'true'%}
-            <script type="text/javascript">alert('Le professeur a bien été ajouté !');</script>
-        {% endif %}
-        
-    {% endblock %}
-    
     <center>Page d'administration</center>
     <ul>
+        {#<li><a href='{{ path('_listUser')}}'>Tableau regroupant tous les utilisateurs</a></li>#}
         <li><a href='{{ path('_uploadCsv')}}'>Importation d'un fichier CSV</a></li>
         <li><a href='{{ path('_resetMdpBySelectingProf')}}'>Réinitialiser le mot de passe d'un professeur</a></li>
         <li><a href='{{ path('_addProf')}}'>Ajouter un professeur</a></li>
         <li><a href='{{ path('_setAdmin')}}'>Rendre un utilisateur administrateur</a></li>
     </ul>
+    
+    <b><br/> 
+        {% for flashMessage in app.session.flashbag.get('resetDone') %}
+                {{ flashMessage }}
+            {% endfor %}
+        {% for flashMessage in app.session.flashbag.get('classeCreated') %}
+                {{ flashMessage }}
+            {% endfor %}
+        {% for flashMessage in app.session.flashbag.get('mdpChanged') %}
+                {{ flashMessage }}
+            {% endfor %}
+        {% for flashMessage in app.session.flashbag.get('csvUploaded') %}
+                {{ flashMessage }}
+            {% endfor %}
+        {% for flashMessage in app.session.flashbag.get('profAdded') %}
+                {{ flashMessage }}
+            {% endfor %}    
+    </b>
 {% endblock %}

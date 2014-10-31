@@ -4,18 +4,6 @@
     
 {% block content %}
     
-    {% block javascript %}
-        {% if app.request.get('mdpChanged') == 'true'%}
-            <script type="text/javascript">alert('Mot de passe changé !');</script>
-        {% endif %}
-        {% if app.request.get('emailChanged') == 'true'%}
-            <script type="text/javascript">alert('E-mail changé !');</script>
-        {% endif %}
-        {% if app.request.get('nomChanged') == 'true'%}
-            <script type="text/javascript">alert('Nom et prénom changés !');</script>
-        {% endif %}
-    {% endblock %}
-    
     <center>Gestion de l'utilisateur</center><br/>
     Nom d'utilisateur : {{ app.security.getToken().getUser().getUsername() }}<br/>
     Nom: {{ app.security.getToken().getUser().getNom() }}<br/>
@@ -33,4 +21,16 @@
         <li><a href='{{ path('_updateEmail')}}'>Changer votre email</a></li>
         <li><a href='{{ path('_updateNom')}}'>Changer votre nom et prenom</a></li>
     </ul>
+        <b><br/>
+        {% for flashMessage in app.session.flashbag.get('mdpChanged') %}
+                {{ flashMessage }}
+            {% endfor %}
+        {% for flashMessage in app.session.flashbag.get('emailChanged') %}
+                {{ flashMessage }}
+            {% endfor %}
+        {% for flashMessage in app.session.flashbag.get('nomChanged') %}
+                {{ flashMessage }}
+            {% endfor %}
+        
+        </b>
 {% endblock %}

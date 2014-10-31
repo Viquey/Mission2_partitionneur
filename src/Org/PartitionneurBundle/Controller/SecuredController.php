@@ -91,7 +91,9 @@ class SecuredController extends Controller
             $em->persist($prof);
             $em->flush();
             
-            return $this->redirect( $this->generateUrl('_administration', array('profAdd'=>'true')));
+            $this->get('session')->getFlashBag()->add('profAdded', "Le professeur a été ajouté !");
+            
+            return $this->redirect( $this->generateUrl('_administration'));
             
         }
         
@@ -100,6 +102,16 @@ class SecuredController extends Controller
                         ));
         
     }
+    
+    /**
+     * @Route("/tableau-utilisateur",name="_listUser")
+     * @Template()
+     */
+    /*public function listUserAction()
+    {
+        
+        return array();
+    }*/
     
     /**
      * @Route("/index",name="_index2")
@@ -156,6 +168,8 @@ class SecuredController extends Controller
             $em = $this->getDoctrine()->getManager();
             $em->persist($thisUser);
             $em->flush();*/
+            
+            $this->get('session')->getFlashBag()->add('adminSetted', "Le professeur a été ajouté !");
         }
         
        
@@ -334,8 +348,10 @@ class SecuredController extends Controller
             $em = $this->getDoctrine()->getManager();
             $em->persist($user);
             $em->flush();
+            
+            $this->get('session')->getFlashBag()->add('emailChanged', "L'email a été changé avec succès !");
 
-            return $this->redirect( $this->generateUrl('_gestion', array('emailChanged'=>'true')));
+            return $this->redirect( $this->generateUrl('_gestion'));
         }
 
         return $this->render('OrgPartitionneurBundle:Secured:updateEmail.html.twig', array(
@@ -365,8 +381,10 @@ class SecuredController extends Controller
             $em = $this->getDoctrine()->getManager();
             $em->persist($user);
             $em->flush();
+            
+            $this->get('session')->getFlashBag()->add('nomChanged', "Le nom a été changé avec succès !");
 
-            return $this->redirect( $this->generateUrl('_gestion', array('nomChanged'=>'true')));
+            return $this->redirect( $this->generateUrl('_gestion'));
         }
 
         return $this->render('OrgPartitionneurBundle:Secured:updateNom.html.twig', array(
@@ -412,16 +430,22 @@ class SecuredController extends Controller
                     $em = $this->getDoctrine()->getManager();
                     $em->persist($user);
                     $em->flush();
+                    
+                    $this->get('session')->getFlashBag()->add('mdpChanged', "Le mot de passe a été changé avec succès !");
 
-                    return $this->redirect( $this->generateUrl('_gestion', array('mdpChanged'=>'true')));
+                    return $this->redirect( $this->generateUrl('_gestion'));
                     
                 }
-                else{                 
-                    return $this->redirect( $this->generateUrl('_updateMdp', array('newNotOk'=>'true')));             
+                else{    
+                    $this->get('session')->getFlashBag()->add('newNotOk', "Le champ de confirmation est différent !");
+                    
+                    return $this->redirect( $this->generateUrl('_updateMdp'));             
                 }
             }
             else{
-                return $this->redirect( $this->generateUrl('_updateMdp', array('oldNotOk'=>'true')));
+                $this->get('session')->getFlashBag()->add('oldNotOk', "Vous avez entré un mot de passe différent du votre, veuillez le ressaisir.");
+                
+                return $this->redirect( $this->generateUrl('_updateMdp'));
             }
             
         }
@@ -472,7 +496,10 @@ class SecuredController extends Controller
                 $em = $this->getDoctrine()->getManager();
                 $em->persist($user);
                 $em->flush();
-                return $this->redirect( $this->generateUrl('_administration', array('resetDone'=>'true')));
+                
+                $this->get('session')->getFlashBag()->add('resetDone', "Le mot de passe a été réinitialisé !");
+                
+                return $this->redirect( $this->generateUrl('_administration'));
             }
         }
         
@@ -599,7 +626,9 @@ class SecuredController extends Controller
                         }
                     }
                 }
-                return $this->redirect( $this->generateUrl('_administration', array('csvUploaded'=>'true')));
+                $this->get('session')->getFlashBag()->add('csvUploaded', "Le fichier Csv a été envoyé avec succès !");
+                
+                return $this->redirect( $this->generateUrl('_administration'));
                 fclose($handle);
             }
         }

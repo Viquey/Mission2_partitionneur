@@ -3,15 +3,18 @@
 {% block title parent() ~ "Choisir un autre mot de passe" %}
     
 {% block content %}
+    
     <center>Changement de mot de passe</center>
     {{ form(form) }}
-    {% block javascript %}
-        {% if app.request.get('newNotOk') == 'true'%}
-            <script type="text/javascript">alert('Les deux nouveaux mots de passe ne sont pas identiques.');</script>
-        {% endif %}
-        {% if app.request.get('oldNotOk') == 'true'%}
-            <script type="text/javascript">alert('L\'ancien mot de passe n\'est pas correct.');</script>
-        {% endif %}
-    {% endblock %}
+    
+    <b><br/>
+        {% for flashMessage in app.session.flashbag.get('newNotOk') %}
+                {{ flashMessage }}
+            {% endfor %}
+        {% for flashMessage in app.session.flashbag.get('oldNotOk') %}
+                {{ flashMessage }}
+            {% endfor %}
+    </b>
+            
 {% endblock %}
 
