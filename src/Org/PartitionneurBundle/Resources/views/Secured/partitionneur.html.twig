@@ -1,6 +1,6 @@
 {% extends "::layout.html.twig" %}
 
-{% block title parent() ~ "Page de test" %}
+{% block title parent() ~ "Partitionneur" %}
     
 {% block content %}
     
@@ -29,7 +29,9 @@
             
             <div class="form-group">
                 <label  for="listeeleves">Liste élèves</label>         
-                <textarea class="form-control" id="listeeleves" name="listeeleves">{% if eleves is defined %}{% for eleve in eleves %}{{ eleve ~ '\n'|raw}}{% endfor %}{% endif %}</textarea>        
+
+                <textarea class="form-control" id="listeeleves" name="listeeleves" rows="10">{% if eleves is defined %}{% for eleve in eleves %}{{ eleve ~ '\n'|raw}}{% endfor %}{% endif %}</textarea>       
+
             </div>
 
             <div class="form-group">

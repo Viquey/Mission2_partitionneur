@@ -1,10 +1,13 @@
 {% extends "::layout.html.twig" %}
 
-{% block title parent() ~ "Ajout d'un professeur" %}
+{% block title parent() ~ "Ajouter un professeur" %}
     
 {% block content %}
     <p>Ajouter un professeur<br/>
-        Le professeur devra renseigner lui même son adresse mail. Son mot de passe par défaut est "sio22". Son nom de compte est généré automatiquement de cette manière : (1ère lettre de son prénom)(nom complet). Ainsi si le professeur s'appelle Floyd Chemino, son nom de compte sera "fchemino"</p>
+        Le professeur devra renseigner lui même son adresse mail.<br/> Son mot de passe par défaut est "sio22".
+        <br/> Son nom de compte est généré automatiquement de cette manière : (1ère lettre de son prénom)(nom complet).
+        <br/> Ainsi si le professeur s'appelle Floyd Chemino, son nom de compte sera "fchemino"
+    </p>
     {{ form(form) }}
 
 {% endblock %}
