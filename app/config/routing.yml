@@ -8,10 +8,10 @@ org_user:
     type:     annotation
     prefix:   /
 
-org_forma:
-    resource: "@OrgFormaBundle/Controller/"
-    type:     annotation
-    prefix:   /
+#org_forma:
+#    resource: "@OrgFormaBundle/Controller/"
+#    type:     annotation
+#    prefix:   /
 
 login:
     pattern:   /login
