@@ -1,0 +1,96 @@
+ {% extends "::layout.html.twig" %}
+
+{% block title parent() ~ "Liste des utilisateurs" %}
+    
+    {% block css %}
+        <link rel="stylesheet" href="{{ asset('bundles/dataTable/jquery.dataTables.min.css') }}"/>
+    {% endblock%}
+    
+{% block content %}
+    {{ form(form) }}
+    {% if classe is defined %}
+        <h2>{{ classe.name ~" : "~classe.eleves|length~" élèves et "~classe.users|length~" professeur(s)" }} </h2><br/>
+        <h4> Elèves </h4>
+        <table id ="elevesTable" class="display" cellspacing="2px" cellpadding="2px" rules="all">
+            <thead>
+                <tr>
+                    <th>Nom</th>
+                    <th>Prenom</th>
+                    <th>Modifier</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for eleve in eleves %}
+                        <tr>
+                            <td>{{eleve.nom}}</td>
+                            <td>{{eleve.prenom}}</td>
+                            <td><a href="{{path("_updateEleve", {'id' : eleve.id}) }}">Modifier</a></td>
+                        </tr> 
+                {% endfor %}
+            <tbody>
+        </table><br/><br/>
+        <h4> Professeurs </h4>
+        <table id ="usersTable" class="display" cellspacing="2px" cellpadding="2px" rules="all">
+            <thead>
+                <tr>
+                    <th>Nom</th>
+                    <th>Prenom</th>
+                    <th>Nom d'utilisateur</th>
+                    <th>Role</th>
+                    <th>E-mail</th>
+                    <th>Classes</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                        <tr>
+                            <td>{{user.nom}}</td>
+                            <td>{{user.prenom}}</td>
+                            <td>{{user.username}}</td>
+                            <td>
+                                {% for group in user.groups %}
+                                    {{group.name}}
+                                {% endfor %}
+                            </td>
+                            <td>{{user.email}}</td>
+                            <td>
+                                {% for classe in user.classes %}
+                                    {{classe.name~" | "}}
+                                {% endfor %}
+                            </td>
+                        </tr> 
+
+                {% endfor %}
+            <tbody>
+        </table>
+       
+    {% endif %}
+{% endblock %}
+
+{% block scripts %}
+    {#<script type="text/javascript" charset="utf8" src="{{ asset('bundles/dataTable/jquery-1.10.2.min.js') }}"></script>#}
+    <script type="text/javascript" charset="utf8" src="{{ asset('bundles/dataTable/jquery.dataTables.min.js') }}"></script>
+    <script type="text/javascript">
+        $(document).ready( function () {
+            $('#elevesTable').DataTable(
+                {
+                "language": {
+                    "lengthMenu": "Afficher _MENU_ utilisateurs par pages",
+                    "info": "Affichage de la  page _PAGE_ sur _PAGES_",
+                    "zeroRecords": "Rien n'a été trouvé - désolé",
+                }
+        }    
+                );
+            $('#usersTable').DataTable(
+                {
+                "language": {
+                    "lengthMenu": "Afficher _MENU_ utilisateurs par pages",
+                    "info": "Affichage de la  page _PAGE_ sur _PAGES_",
+                    "zeroRecords": "Rien n'a été trouvé - désolé",
+                }
+        }    
+                );
+        } );
+    </script>
+{% endblock %}
+

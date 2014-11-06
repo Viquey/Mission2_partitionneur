@@ -930,4 +930,86 @@ class SecuredController extends Controller
         );
         
     }
+    
+    /**
+     * @Route("/administration/listeClasse",name="_listeClasse")
+     * @Template()
+     */
+    public function listeClasseAction(Request $request)
+    {
+        $classeRepository = $this->getDoctrine()->getRepository('OrgPartitionneurBundle:Classe');
+        $classes = $classeRepository->findAll();
+        foreach($classes as $entity) {
+            $key = $entity->getId();
+            $arrayClasses[$key] = $entity->getName(); 
+        }
+        
+        
+        $form = $this->createFormBuilder()         
+                ->add('selectClasse', 'choice', array(
+                                        'choices'   => $arrayClasses,
+                                    'multiple'  => false,
+                                    'expanded'  => false,
+                                    'label'     => 'Selectionner la classe',
+                                ))
+                ->add('Afficher', 'submit')
+                ->getForm();
+        
+        $form->handleRequest($request);
+        
+        if($form->isValid()) {
+            
+            $id = $form->get('selectClasse')->getData();
+            $classe = $classeRepository->find($id);
+            $eleves = $classe->getEleves();
+            $profs = $classe->getUsers();
+            
+            return $this->render('OrgPartitionneurBundle:Secured:listeClasse.html.twig', array(
+                        'form' => $form->createView(),
+                        'classe' => $classe,
+                        'eleves' => $eleves,
+                        'users' => $profs,
+                        ));
+            
+        }
+        
+       
+        return $this->render('OrgPartitionneurBundle:Secured:listeClasse.html.twig', array(
+                        'form' => $form->createView(),
+                        ));
+    }
+    
+    /**
+     * @Route("/administration/updateEleve?id={id}",name="_updateEleve")
+     * @Template()
+     */
+    public function updateEleveAction(Request $request, $id)
+    {
+        $eleveRepository = $this->getDoctrine()->getRepository('OrgPartitionneurBundle:Eleve');
+        $eleve = $eleveRepository->find($id);
+
+        $form = $this->createFormBuilder($eleve)
+            ->add('nom', 'text')
+            ->add('prenom', 'text')
+            ->add('Modifier', 'submit')
+            ->getForm();
+
+        $form->handleRequest($request);
+
+        if ($form->isValid()) {
+            
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($eleve);
+            $em->flush();
+
+            $this->get('session')->getFlashBag()->add('eleveUpdate', "L'élève a été modifié !");
+                
+            return $this->redirect( $this->generateUrl('_administration'));
+        }
+    
+        return $this->render('OrgPartitionneurBundle:Secured:updateEleve.html.twig', array(
+            'form' => $form->createView(),
+        ));
+    }
+      
 }

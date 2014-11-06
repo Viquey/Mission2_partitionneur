@@ -7,6 +7,7 @@
     <center>Page d'administration</center>
     <ul>
         <li><a href='{{ path('_listUser')}}'>Liste des utilisateurs</a></li>
+        <li><a href='{{ path('_listeClasse')}}'>Informations sur une classe</a></li>
         <li><a href='{{ path('_uploadCsv')}}'>Importation d'un fichier CSV</a></li>
         <li><a href='{{ path('_resetMdpBySelectingProf')}}'>Réinitialiser le mot de passe d'un professeur</a></li>
         <li><a href='{{ path('_addProf')}}'>Ajouter un professeur</a></li>
@@ -35,6 +36,9 @@
                 {{ flashMessage }}
         {% endfor %}
         {% for flashMessage in app.session.flashbag.get('eleveAdded') %}
+                {{ flashMessage }}
+        {% endfor %}
+        {% for flashMessage in app.session.flashbag.get('eleveUpdate') %}
                 {{ flashMessage }}
         {% endfor %}
         {% for flashMessage in app.session.flashbag.get('adminSetted') %}
