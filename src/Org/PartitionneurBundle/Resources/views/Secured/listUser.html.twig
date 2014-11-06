@@ -3,7 +3,7 @@
 {% block title parent() ~ "Liste des utilisateurs" %}
     
     {% block css %}
-        <link rel="stylesheet" href="{{ asset('//cdn.datatables.net/1.10.3/css/jquery.dataTables.min.css') }}"/>
+        <link rel="stylesheet" href="{{ asset('bundles/dataTable/jquery.dataTables.min.css') }}"/>
     {% endblock%}
     
 {% block content %}
@@ -11,9 +11,9 @@
     <table id ="usersTable" class="display" cellspacing="2px" cellpadding="2px" rules="all">
         <thead>
             <tr>
-                <th>Username</th>
                 <th>Nom</th>
                 <th>Prenom</th>
+                <th>Username</th>
                 <th>Role</th>
                 <th>E-mail</th>
                 <th>Classe</th>
@@ -45,11 +45,19 @@
 {% endblock %}
 
 {% block scripts %}
-    <script type="text/javascript" charset="utf8" src="{{ asset('//code.jquery.com/jquery-1.10.2.min.js') }}"></script>
-    <script type="text/javascript" charset="utf8" src="{{ asset('//cdn.datatables.net/1.10.3/js/jquery.dataTables.min.js') }}"></script>
+    {#<script type="text/javascript" charset="utf8" src="{{ asset('bundles/dataTable/jquery-1.10.2.min.js') }}"></script>#}
+    <script type="text/javascript" charset="utf8" src="{{ asset('bundles/dataTable/jquery.dataTables.min.js') }}"></script>
     <script type="text/javascript">
         $(document).ready( function () {
-            $('#usersTable').DataTable();
+            $('#usersTable').DataTable(
+                {
+                "language": {
+                    "lengthMenu": "Afficher _MENU_ utilisateurs par pages",
+                    "info": "Affichage de la  page _PAGE_ sur _PAGES_",
+                    "zeroRecords": "Rien n'a été trouvé - désolé",
+                }
+        }    
+                );
         } );
     </script>
 {% endblock %}

@@ -34,7 +34,9 @@
         <li {% if app.request.attributes.get('_route') == '_index' %}class="active"{% endif %}><a href="{{ path('_index')}}">Accueil</a></li>
         <li {% if app.request.attributes.get('_route') == '_partitionneur' %}class="active"{% endif %}><a href='{{ path('_partitionneur')}}'>Partitionneur</a></li>
         {% if app.user and is_granted('ROLE_ADMIN') %}
-            <li {% if app.request.attributes.get('_route') == '_administration' %}class="active"{% endif %}><a href='{{ path('_administration')}}'>Administration</a></li>
+            <li {% if app.request.attributes.get('_route') == '_administration' %}class="active"{% endif %}>
+                <a href='{{ path('_administration')}}'>Administration</a>
+            </li>
         {% endif %}
       </ul>
       <ul class="nav navbar-nav navbar-right">
@@ -68,7 +70,7 @@
   
   
 </div>
-            <script src="{{ asset('//ajax.googleapis.com/ajax/libs/jquery/2.0.2/jquery.min.js') }}"></script>            
+            <script src="{{ asset('bundles/partitionneur/jquery.min.js') }}"></script>            
             <script src="{{ asset('bundles/partitionneur/jsoncallback.js') }}"></script>
             
             {% block scripts %}
