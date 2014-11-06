@@ -6,11 +6,13 @@
     
     <center>Page d'administration</center>
     <ul>
-        <li><a href='{{ path('_listUser')}}'>Tableau regroupant tous les utilisateurs</a></li>
+        <li><a href='{{ path('_listUser')}}'>Liste des utilisateurs</a></li>
         <li><a href='{{ path('_uploadCsv')}}'>Importation d'un fichier CSV</a></li>
         <li><a href='{{ path('_resetMdpBySelectingProf')}}'>Réinitialiser le mot de passe d'un professeur</a></li>
         <li><a href='{{ path('_addProf')}}'>Ajouter un professeur</a></li>
         <li><a href='{{ path('_removeUser')}}'>Supprimer un professeur</a></li>
+        <li><a href='{{ path('_addEleve')}}'>Ajouter un élève</a></li>
+        <li><a href='{{ path('_removeEleve')}}'>Supprimer un élève</a></li>
         <li><a href='{{ path('_removeClasse')}}'>Supprimer une classe</a></li>
         <li><a href='{{ path('_setAdmin')}}'>Promouvoir un utilisateur</a></li>
         <li><a href='{{ path('_setUser')}}'>Retrograder un administrateur </a></li>
@@ -32,6 +34,9 @@
         {% for flashMessage in app.session.flashbag.get('profAdded') %}
                 {{ flashMessage }}
         {% endfor %}
+        {% for flashMessage in app.session.flashbag.get('eleveAdded') %}
+                {{ flashMessage }}
+        {% endfor %}
         {% for flashMessage in app.session.flashbag.get('adminSetted') %}
                 {{ flashMessage }}
         {% endfor %} 
@@ -39,6 +44,9 @@
                 {{ flashMessage }}
         {% endfor %}
         {% for flashMessage in app.session.flashbag.get('userRemoved') %}
+                {{ flashMessage }}
+        {% endfor %}
+        {% for flashMessage in app.session.flashbag.get('eleveRemoved') %}
                 {{ flashMessage }}
         {% endfor %}
         {% for flashMessage in app.session.flashbag.get('classeRemoved') %}

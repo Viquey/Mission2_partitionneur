@@ -108,6 +108,65 @@ class SecuredController extends Controller
     }
     
     /**
+     * @Route("/administration/ajoutEleve", name="_addEleve")
+     * @Template()
+     */
+    public function addEleveAction(Request $request) {
+        
+        $eleve = new Eleve();
+        
+        $classeRepository = $this->getDoctrine()->getRepository('OrgPartitionneurBundle:Classe');
+        $classes = $classeRepository->findAll();
+        foreach($classes as $entity){
+            $key=$entity->getId();
+            $arrayClasse[$key]=$entity->getName();
+
+        }
+            
+        
+        $form = $this->createFormBuilder()
+                ->add('nom', 'text')
+                ->add('prenom','text')
+                ->add('selectClasse', 'choice', array(
+                                        'choices'   => $arrayClasse,
+                                    'multiple'  => false,
+                                    'expanded'  => true,
+                                    'label'     => 'Selectionner la classe',
+                                ))
+                ->add('Ajouter', 'submit')
+                ->getForm();
+        
+        $form->handleRequest($request);
+        
+        if ($form->isValid()){
+            
+            $idClasse = $form->get('selectClasse')->getData();
+            $classe = $classeRepository->find($idClasse);
+            $eleve->setClasse($classe);
+                  
+            $prenom = $form->get('prenom')->getData();
+            $nom = $form->get('nom')->getData();
+
+            $eleve->setNom($nom);
+            $eleve->setPrenom($prenom);
+            
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($eleve);
+            $em->flush();
+            
+            $this->get('session')->getFlashBag()->add('eleveAdded', "L'élève a été ajouté !");
+            
+            return $this->redirect( $this->generateUrl('_administration'));
+            
+        }
+        
+        return $this->render('OrgPartitionneurBundle:Secured:addEleve.html.twig', array(
+                        'form' => $form->createView(),
+                        ));
+        
+    }
+    
+    /**
      * @Route("/administration/removeUser",name="_removeUser")
      * @Template()
      */
@@ -148,6 +207,54 @@ class SecuredController extends Controller
         
        
         return $this->render('OrgPartitionneurBundle:Secured:removeUser.html.twig', array(
+                        'form' => $form->createView(),
+                        ));
+    }
+    
+    /**
+     * @Route("/administration/removeEleve",name="_removeEleve")
+     * @Template()
+     */
+    public function removeEleveAction(Request $request)
+    {
+   
+        $form = $this->createFormBuilder()         
+                ->add('nom', 'text')
+                ->add('prenom','text')
+                ->add('Supprimer', 'submit')
+                ->getForm();
+        
+        $form->handleRequest($request);
+        
+        if($form->isValid()) {
+            
+            $nom = $form->get('nom')->getData();
+            $prenom = $form->get('prenom')->getData();
+            $eleveRepository = $this->getDoctrine()->getRepository('OrgPartitionneurBundle:Eleve');
+            $eleveMaybe = $eleveRepository->findOneByNom($nom);
+            if($eleveMaybe->getPrenom()==$prenom){
+                $eleve = $eleveMaybe;
+            }
+            else{
+                $eleveArray = $eleveRepository->findByNom($nom);
+                foreach($eleveArray as $entity){
+                    $prenomEntity = $entity->getPrenom();
+                    if($prenomEntity == $prenom){
+                        $eleve = $entity;
+                    } 
+                }    
+            }
+           
+            $em = $this->getDoctrine()->getManager();
+            $em->remove($eleve);
+            $em->flush();
+            
+            $this->get('session')->getFlashBag()->add('eleveRemoved', "L'élève a été supprimé!");
+            return $this->redirect( $this->generateUrl('_administration'));
+        }
+        
+       
+        return $this->render('OrgPartitionneurBundle:Secured:removeEleve.html.twig', array(
                         'form' => $form->createView(),
                         ));
     }
