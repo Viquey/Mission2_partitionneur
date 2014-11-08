@@ -17,6 +17,7 @@
                     <th>Nom</th>
                     <th>Prenom</th>
                     <th>Modifier</th>
+                    <th>X</th>
                 </tr>
             </thead>
             <tbody>
@@ -25,6 +26,7 @@
                             <td>{{eleve.nom}}</td>
                             <td>{{eleve.prenom}}</td>
                             <td><a href="{{path("_updateEleve", {'id' : eleve.id}) }}">Modifier</a></td>
+                            <td><a href="{{path("_removeEleve", {'id' : eleve.id}) }}" onClick="return confirm('Etes-vous sûr de vouloir supprimer {{ eleve.nom ~ " " ~ eleve.prenom }} ?')">Supprimer</a></td>
                         </tr> 
                 {% endfor %}
             <tbody>

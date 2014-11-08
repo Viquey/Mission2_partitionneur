@@ -212,38 +212,15 @@ class SecuredController extends Controller
     }
     
     /**
-     * @Route("/administration/removeEleve",name="_removeEleve")
+     * @Route("/administration/removeEleve?id={id}",name="_removeEleve")
      * @Template()
      */
-    public function removeEleveAction(Request $request)
+    public function removeEleveAction(Request $request, $id)
     {
    
-        $form = $this->createFormBuilder()         
-                ->add('nom', 'text')
-                ->add('prenom','text')
-                ->add('Supprimer', 'submit')
-                ->getForm();
-        
-        $form->handleRequest($request);
-        
-        if($form->isValid()) {
-            
-            $nom = $form->get('nom')->getData();
-            $prenom = $form->get('prenom')->getData();
             $eleveRepository = $this->getDoctrine()->getRepository('OrgPartitionneurBundle:Eleve');
-            $eleveMaybe = $eleveRepository->findOneByNom($nom);
-            if($eleveMaybe->getPrenom()==$prenom){
-                $eleve = $eleveMaybe;
-            }
-            else{
-                $eleveArray = $eleveRepository->findByNom($nom);
-                foreach($eleveArray as $entity){
-                    $prenomEntity = $entity->getPrenom();
-                    if($prenomEntity == $prenom){
-                        $eleve = $entity;
-                    } 
-                }    
-            }
+            $eleve = $eleveRepository->find($id);
+            
            
             $em = $this->getDoctrine()->getManager();
             $em->remove($eleve);
@@ -251,12 +228,7 @@ class SecuredController extends Controller
             
             $this->get('session')->getFlashBag()->add('eleveRemoved', "L'élève a été supprimé!");
             return $this->redirect( $this->generateUrl('_administration'));
-        }
         
-       
-        return $this->render('OrgPartitionneurBundle:Secured:removeEleve.html.twig', array(
-                        'form' => $form->createView(),
-                        ));
     }
     
     /**
