@@ -475,7 +475,7 @@ class SecuredController extends Controller
                         natcasesort($arrayStrEleves);
                         return $this->render('OrgPartitionneurBundle:Secured:partitionneur.html.twig', array(
                         'form' => $form->createView(),
-                        'eleves'=> $arrayStrEleves,
+                        'eleves'=> $arrayStrEleves
                         ));
 
                     }
@@ -583,12 +583,11 @@ class SecuredController extends Controller
         
 
         $partionneur = new JsonPartition($cardGrp, $personnes);
-        if($choice=="maxi"){
-            $partionnement=$partionneur->getJson();
-        }
-        else{
+        $nbPersonne = $partionneur->getNbPersonne();
+        $partionnement=$partionneur->getJson();
+        if (!$partionneur->isEquilibre() && $choice == "equilibre") {
             $partionnement=$partionneur->getSecondJson();
-        }
+        }  
         return new Response($partionnement);
     }
     

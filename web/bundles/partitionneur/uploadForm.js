@@ -12,6 +12,4 @@ function uploadForm(choice) {
               console.log(json);
            }
     });
-} 
-
-
+}

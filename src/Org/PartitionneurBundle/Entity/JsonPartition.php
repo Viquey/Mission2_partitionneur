@@ -8,12 +8,57 @@ class JsonPartition {
 
   /* @var $personnes liste de noms de personnes */
   private $personnes;
+  
+  /* @var $nbPersonnes nombre de personnes */
+  private $nbPersonne;
+  
+  /* @var $isEquilibre si equilibre ($card % $nbPersonne == 0) */
+  private $isEquilibre;
 
   public function __construct($card, $listePers) {
     $this->card = $card;
     $this->personnes = $listePers;
     shuffle($this->personnes);
   }
+    
+  /**
+     * Set nbPersonne
+     *
+     * @param int $personnes
+     * @return JsonPartition
+     */
+    public function setNbPersonne($personnes)
+    {
+        $this->nbPersonne = count($personnes);
+
+        return $this;
+    }
+
+    /**
+     * Get nbPersonne
+     *
+     * @return int
+     */
+    public function getNbPersonne()
+    {
+        $this->nbPersonne = count($this->personnes);
+        return $this->nbPersonne;
+    }
+    
+    /**
+     * Get isEquilibre
+     *
+     * @return boolean
+     */
+    public function isEquilibre()
+    {
+        $this->isEquilibre = false;
+        if ($this->nbPersonne % $this->card == 0) {
+            $this->isEquilibre = true;
+        }
+        
+        return $this->isEquilibre;
+    }
 
   public function getJson() {
     $nbGrp = count($this->personnes) / (int) $this->card;

@@ -2,6 +2,43 @@
 
 {% block title parent() ~ "Partitionneur" %}
     
+    {% block javascripts %}
+        <script>
+            
+            /*       
+             *      LIMITE DE LA FONCTION : 
+             *      si on ajoute des élèves à la main (via textArea) 
+             *      le nbEleve sera trjs le même
+             *      
+             */
+            
+            function firstPush() {
+                var cardinal = $('#cardgroupes').val();
+                var nbEleve = {{ eleves | length }};
+                //var nbEleve = $('#nbEleve').val();
+                //alert(nbEleve);
+                var blocChoixGroup = $('#choixGroupe');
+                if (cardinal <= 0 || cardinal == 1 || cardinal >= nbEleve) {
+                    alert("Le cardinal doit être un nombre compris entre 1 (exclu) et le nombre total d'élèves (exlu aussi)")
+                }
+                else if (nbEleve % cardinal == 0) {
+                    blocChoixGroup.html("<b id=\"msgEqui\">Tous les groupes sont équilibrés !</b>")
+                    uploadForm();
+                }
+                else {
+                    blocChoixGroup.html("<input type='radio' name='choice'\n\
+                        onChange='uploadForm();' value='maxi' checked='true'>\n\
+                            Un maximum de groupe au cardinal max<br/>\n\
+                        <input type='radio' name='choice' \n\
+                            onChange='uploadForm(\"equilibre\");' \n\
+                                value='equilibre'>Un maximum de groupe équilibrés");
+                    uploadForm();
+                }
+            }
+       </script> 
+    {% endblock %}
+    
+    
 {% block content %}
     
     
@@ -28,14 +65,14 @@
             </div>-->
             
             <div class="form-group">
-                <label  for="listeeleves">Liste élèves</label>         
+                <label  for="listeeleves">Liste élèves <b id="nbEleve">({{ eleves | length }} élèves)</b></b></label>         
 
                 <textarea class="form-control" id="listeeleves" name="listeeleves" rows="10">{% if eleves is defined %}{% for eleve in eleves %}{{ eleve ~ '\n'|raw}}{% endfor %}{% endif %}</textarea>       
 
             </div>
 
             <div class="form-group">
-                <button type="button" class="btn" onClick="uploadForm('maxi');">Soumettre</button>        
+                <button type="button" class="btn" onClick="firstPush();">Soumettre</button>        
             </div>
             
         </div>
@@ -49,10 +86,12 @@
    <div class="panel-body">
     <div class="row">
      <!--<h3>Choix d'une partition</h3>-->
+     
         <div id="choixGroupe">
-            <input type="radio" name='choice' onChange="uploadForm('maxi');" value="maxi" checked="true">Un maximum de groupe au cardinal max<br/>
-            <input type="radio" name='choice' onChange="uploadForm('equilibre');" value="equilibre">Un maximum de groupe équilibrés
+            <!--<input type="radio" name='choice' onChange="uploadForm();" value="maxi" checked="true">Un maximum de groupe au cardinal max<br/>
+            <input type="radio" name='choice' onChange="uploadForm('equilibre');" value="equilibre">Un maximum de groupe équilibrés-->
         </div>
+     
     </div>
    </div>
   </div>
